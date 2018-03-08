@@ -24,5 +24,5 @@ func BytesToHash(b []byte) Hash {
 	return h
 }
 func BigToHash(b *big.Int) Hash{
-	BytesToHash(b.Bytes())
+	return BytesToHash(b.Bytes())
 }
