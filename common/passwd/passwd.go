@@ -3,7 +3,6 @@ package passwd
 import (
 	"fmt"
 	"github.com/piterparks/gopass"
-	"starchain/common/log"
 	"os"
 	"flag"
 )
