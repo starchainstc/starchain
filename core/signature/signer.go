@@ -6,8 +6,8 @@ import (
 )
 
 type Signer interface {
-	Prikey() []byte
-	Pubkey() *crypto.PublicKey
+	PriKey() []byte
+	PubKey() *crypto.PublicKey
 }
 
 
