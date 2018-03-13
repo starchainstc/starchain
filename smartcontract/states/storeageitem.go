@@ -13,7 +13,7 @@ type StorageItem struct {
 }
 
 
-func NewStoreageItem(value []byte) *StorageKey{
+func NewStorageItem(value []byte) *StorageKey{
 	var item StorageItem
 	item.Value = value
 	return &item

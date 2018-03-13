@@ -12,7 +12,7 @@ type StorageKey struct {
 	Key []byte
 }
 
-func NewStoreageKey(codehash *common.Uint160,key []byte) *StorageKey{
+func NewStorageKey(codehash *common.Uint160,key []byte) *StorageKey{
 	var storagekey StorageKey
 	storagekey.CodeHash = codehash
 	storagekey.Key = key
