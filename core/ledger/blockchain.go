@@ -5,6 +5,8 @@ import (
 	"sync"
 	"starchain/crypto"
 	."starchain/errors"
+	"starchain/common/log"
+	."starchain/common"
 )
 
 type Blockchain struct {
@@ -28,4 +30,63 @@ func NewBlockchainWithGenesisBlock(defBookKeeper []*crypto.PubKey) (*Blockchain,
 	genesisBlock.RebuildMerkleRoot()
 	hashx := genesisBlock.Hash()
 	genesisBlock.hash = &hashx
+}
+
+func (bc *Blockchain) AddBlock(block *Block) error {
+	log.Debug()
+	bc.mutex.Lock()
+	defer bc.mutex.Unlock()
+
+	err := bc.SaveBlock(block)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (bc *Blockchain) GetHeader(hash Uint256) (*Header, error) {
+	header, err := DefaultLedger.Store.GetHeader(hash)
+	if err != nil {
+		return nil, NewDetailErr(err, ErrNoCode, "[Blockchain], GetHeader failed.")
+	}
+	return header, nil
+}
+
+func (bc *Blockchain) SaveBlock(block *Block) error {
+	log.Debugf("Save block, block hash %x", block.Hash())
+	err := DefaultLedger.Store.SaveBlock(block, DefaultLedger)
+	if err != nil {
+		log.Warn("Save block failure , ", err)
+		return err
+	}
+
+	return nil
+}
+
+func (bc *Blockchain) ContainsTransaction(hash Uint256) bool {
+	//TODO: implement error catch
+	_, err := DefaultLedger.Store.GetTransaction(hash)
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+func (bc *Blockchain) GetBookKeepersByTXs(others []*tx.Transaction) []*crypto.PubKey {
+	//TODO: GetBookKeepers()
+	//TODO: Just for TestUse
+
+	return StandbyBookKeepers
+}
+
+func (bc *Blockchain) GetBookKeepers() []*crypto.PubKey {
+	//TODO: GetBookKeepers()
+	//TODO: Just for TestUse
+
+	return StandbyBookKeepers
+}
+
+func (bc *Blockchain) CurrentBlockHash() Uint256 {
+	return DefaultLedger.Store.GetCurrentBlockHash()
 }
