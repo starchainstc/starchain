@@ -1,6 +1,6 @@
 package store
 
-type IITerator interface {
+type IIterator interface {
 	Next() bool
 	Prev() bool
 	First() bool
@@ -20,5 +20,5 @@ type IStore interface {
 	BatchDelete(key []byte) error
 	BatchCommit() error
 	Colse() error
-	NewIterator(prefix []byte) IITerator
+	NewIterator(prefix []byte) IIterator
 }
