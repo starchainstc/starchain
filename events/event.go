@@ -5,6 +5,10 @@ import (
 	"errors"
 )
 
+type EventFunc func(v interface{})
+
+type Subscriber chan interface{}
+
 type Event struct {
 	m           sync.RWMutex
 	subscribers map[EventType]map[Subscriber]EventFunc
