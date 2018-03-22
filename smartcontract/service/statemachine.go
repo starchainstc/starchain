@@ -29,16 +29,16 @@ func NewStateMachine(dbCache storage.DBCache, innerCache storage.DBCache) *State
 	var stateMachine StateMachine
 	stateMachine.CloneCache = storage.NewCloneDBCache(innerCache, dbCache)
 	stateMachine.StateReader = NewStateReader()
-	stateMachine.StateReader.Register("Neo.Validator.Register", stateMachine.RegisterValidator)
-	stateMachine.StateReader.Register("Neo.Asset.Create", stateMachine.CreateAsset)
-	stateMachine.StateReader.Register("Neo.Contract.Create", stateMachine.CreateContract)
-	stateMachine.StateReader.Register("Neo.Blockchain.GetContract", stateMachine.GetContract)
-	stateMachine.StateReader.Register("Neo.Asset.Renew", stateMachine.AssetRenew)
-	stateMachine.StateReader.Register("Neo.Storage.Get", stateMachine.StorageGet)
-	stateMachine.StateReader.Register("Neo.Contract.Destroy", stateMachine.ContractDestory)
-	stateMachine.StateReader.Register("Neo.Storage.Put", stateMachine.StoragePut)
-	stateMachine.StateReader.Register("Neo.Storage.Delete", stateMachine.StorageDelete)
-	stateMachine.StateReader.Register("Neo.Contract.GetStorageContext", stateMachine.GetStorageContext)
+	stateMachine.StateReader.Register("STC.Validator.Register", stateMachine.RegisterValidator)
+	stateMachine.StateReader.Register("STC.Asset.Create", stateMachine.CreateAsset)
+	stateMachine.StateReader.Register("STC.Contract.Create", stateMachine.CreateContract)
+	stateMachine.StateReader.Register("STC.Blockchain.GetContract", stateMachine.GetContract)
+	stateMachine.StateReader.Register("STC.Asset.Renew", stateMachine.AssetRenew)
+	stateMachine.StateReader.Register("STC.Storage.Get", stateMachine.StorageGet)
+	stateMachine.StateReader.Register("STC.Contract.Destroy", stateMachine.ContractDestory)
+	stateMachine.StateReader.Register("STC.Storage.Put", stateMachine.StoragePut)
+	stateMachine.StateReader.Register("STC.Storage.Delete", stateMachine.StorageDelete)
+	stateMachine.StateReader.Register("STC.Contract.GetStorageContext", stateMachine.GetStorageContext)
 	return &stateMachine
 }
 
@@ -222,8 +222,7 @@ func (s *StateMachine) ContractDestory(engine *avm.ExecutionEngine) (bool, error
 	s.CloneCache.GetInnerCache().GetWriteSet().Delete(keyStr)
 	return true, nil
 }
-
-func (s *StateMachine) CheckStorageContext(context *StorageContext) (bool, error) {
+func (s *StateMachine)CheckStorageContext(context *StorageContext) (bool, error) {
 	item, err := s.CloneCache.TryGet(store.ST_Contract, string(context.codeHash.ToArray()))
 	if err != nil {
 		return false, err

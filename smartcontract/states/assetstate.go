@@ -20,8 +20,8 @@ type AssetState struct {
 	Precision byte
 	FeeMode byte
 	Fee common.Fixed64
-	FeeAddress common.Uint160
-	Owner crypto.PubKey
+	FeeAddress *common.Uint160
+	Owner *crypto.PubKey
 	Admin common.Uint160
 	Issuer common.Uint160
 	Expiration uint32

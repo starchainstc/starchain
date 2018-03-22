@@ -14,7 +14,7 @@ type StorageKey struct {
 
 func NewStorageKey(codehash *common.Uint160,key []byte) *StorageKey{
 	var storagekey StorageKey
-	storagekey.CodeHash = codehash
+	storagekey.CodeHash = *codehash
 	storagekey.Key = key
 	return &storagekey
 }
@@ -33,7 +33,7 @@ func (storageKey *StorageKey) Deserialize(r io.Reader) error {
 	if err != nil {
 		return NewDetailErr(err, ErrNoCode, "StorageKey CodeHash Deserialize fail.")
 	}
-	storageKey.CodeHash = u
+	storageKey.CodeHash = *u
 	key, err := serialization.ReadVarBytes(r)
 	if err != nil {
 		return NewDetailErr(err, ErrNoCode, "StorageKey Key Deserialize fail.")
