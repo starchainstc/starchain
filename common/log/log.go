@@ -134,7 +134,7 @@ func (l *Logger) Outputf(level int, format string, v ...interface{}) error {
 		v = append([]interface{}{LevelName(level), "GID",
 			gid}, v...)
 
-		return l.logger.Output(callDepth, fmt.Sprintf("%s %s %d, "+format+"\n", v...))
+		return l.logger.Output(callDepth, fmt.Sprintf("%s, "+format+"\n", v...))
 	}
 	return nil
 }
