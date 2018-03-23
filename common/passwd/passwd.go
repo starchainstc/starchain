@@ -49,18 +49,18 @@ func GetAccountPwd()([]byte,error){
 	if len(os.Args) == 1{
 		//start node with no params
 		pwd,err = GetPwd()
-		if err != nil{
-			return nil,err
-		}else{
-			var pstr string
-			flag.StringVar(&pstr,"","p","wallet password")
-			flag.Parse()
-			if pstr == ""{
-				fmt.Println("Invaild parameter, use '-p <password>' to specify a not nil wallet password.")
-				os.Exit(1)
-			}
-			pwd = []byte(pstr)
+		if err != nil {
+			return nil, err
 		}
-		return pwd,nil
+	}else{
+		var pstr string
+		flag.StringVar(&pstr,"p","","wallet password")
+		flag.Parse()
+		if pstr == ""{
+			fmt.Println("Invaild parameter, use '-p <password>' to specify a not nil wallet password.")
+			os.Exit(1)
+		}
+		pwd = []byte(pstr)
 	}
+		return pwd,nil
 }
