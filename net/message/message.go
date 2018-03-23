@@ -38,7 +38,7 @@ type varStr struct {
 type filteradd struct {
 	msgHdr
 }
-type filteclear struct {
+type filterclear struct {
 	msgHdr
 }
 type filterload struct {
@@ -182,6 +182,7 @@ func HandleNodeMsg(node Noder, buf []byte, len int) error {
 	log.Debugf("Received data len:  %d\n%x", len, buf[:len])
 
 	s, err := MsgType(buf)
+	//log.Info("msg type:",s)
 	if err != nil {
 		log.Error("Message type parsing error")
 		return err
@@ -298,6 +299,12 @@ func (hdr msgHdr) Serialization() ([]byte, error) {
 	}
 
 	return buf.Bytes(), err
+}
+
+func (hdr msgHdr) Handle(n Noder) error {
+	log.Debug()
+	// TBD
+	return nil
 }
 
 

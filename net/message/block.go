@@ -26,7 +26,7 @@ type block struct {
 
 
 func (msg block) Handle(node Noder) error {
-	log.Debug("RX block message")
+	//log.Info("RX block message")
 	hash := msg.blk.Hash()
 	isSync := false
 	if ledger.DefaultLedger.BlockInLedger(hash) {
@@ -34,6 +34,7 @@ func (msg block) Handle(node Noder) error {
 		log.Debug("Receive ", ReceiveDuplicateBlockCnt, " duplicated block.")
 		return nil
 	}
+	//log.Info("height:",msg.blk.Blockdata.Height)
 	if err := ledger.DefaultLedger.Blockchain.AddBlock(&msg.blk); err != nil {
 		log.Warn("Block add failed: ", err, " ,block hash is ", hash)
 		return err
@@ -49,6 +50,7 @@ func (msg block) Handle(node Noder) error {
 		//haven`t require this block ,relay hash
 		node.LocalNode().Relay(node, hash)
 	}
+	log.Info("send block notice")
 	node.LocalNode().GetEvent("block").Notify(events.EventNewInventory, &msg.blk)
 	return nil
 }
@@ -156,7 +158,6 @@ func ReqBlkData(node Noder, hash common.Uint256) error {
 		log.Error("Error Convert net message ", err.Error())
 		return err
 	}
-
 	node.Tx(sendBuf)
 
 	return nil
