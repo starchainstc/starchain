@@ -10,14 +10,14 @@ import (
 type AccountState struct{
 	ProgramHash common.Uint160
 	IsFrozen bool
-	Balance map[common.Uint256]common.Fixed64
+	Balances map[common.Uint256]common.Fixed64
 
 }
 
 func NewAccountState(programhash common.Uint160,balance map[common.Uint256]common.Fixed64) *AccountState{
 	var accountState AccountState
 	accountState.ProgramHash = programhash
-	accountState.Balance = balance
+	accountState.Balances = balance
 	accountState.IsFrozen = false
 	return &accountState
 }
@@ -25,8 +25,8 @@ func NewAccountState(programhash common.Uint160,balance map[common.Uint256]commo
 func (acc *AccountState) Serialize(w io.Writer) (error){
 	acc.ProgramHash.Serialize(w)
 	serialization.WriteBool(w,acc.IsFrozen)
-	serialization.WriteUint64(w,uint64(len(acc.Balance)))
-	for k,v := range acc.Balance{
+	serialization.WriteUint64(w,uint64(len(acc.Balances)))
+	for k,v := range acc.Balances{
 		k.Serialize(w)
 		v.Serialize(w)
 	}
@@ -58,7 +58,7 @@ func (acc *AccountState) Deserialize(r io.Reader) error{
 		}
 		balance[*u] = *f
 	}
-	acc.Balance = balance
+	acc.Balances = balance
 	return nil
 
 }

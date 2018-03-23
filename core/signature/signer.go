@@ -1,11 +1,9 @@
 package signature
 
-import (
-	"crypto"
-)
+import "starchain/crypto"
 
 type Signer interface {
 	PrivKey() []byte
-	PubKey() *crypto.PublicKey
+	PubKey() *crypto.PubKey
 }
 

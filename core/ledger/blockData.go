@@ -25,11 +25,12 @@ type Blockdata struct {
 
 }
 func (bd *Blockdata) Serialize(w io.Writer) error{
-	bd.Serialize(w)
+	bd.SerializeUnsigned(w)
 	w.Write([]byte{byte(1)})
 	if bd.Program != nil{
 		bd.Program.Serialize(w)
 	}
+	return nil
 }
 
 
@@ -48,7 +49,7 @@ func (bd *Blockdata) SerializeUnsigned(w io.Writer) error{
 }
 
 func (bd *Blockdata) Deserialize(r io.Reader) error{
-	bd.SerializeUnsigned(r)
+	bd.DeserializeUnsigned(r)
 	p:=make([]byte,1)
 	n,err := r.Read(p)
 	if n > 0 {

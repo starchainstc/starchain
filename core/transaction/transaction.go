@@ -7,8 +7,14 @@ import (
 	"starchain/common/serialization"
 	"starchain/core/transaction/payload"
 	."starchain/errors"
+	sig"starchain/core/signature"
 	"errors"
 	"starchain/common/log"
+	"sort"
+	"fmt"
+	"starchain/core/contract"
+	"bytes"
+	"crypto/sha256"
 )
 
 type TransactionType byte
@@ -271,5 +277,327 @@ func (tx *Transaction) DeserializeUnsignedWithoutType(r io.Reader) error {
 		}
 	}
 	return nil
+}
+
+
+
+
+
+
+func (tx *Transaction) GetMergedAssetIDValueFromReference() (TransactionResult, error) {
+	reference, err := tx.GetReference()
+	if err != nil {
+		return nil, err
+	}
+	var result = make(map[common.Uint256]common.Fixed64)
+	for _, v := range reference {
+		amout, ok := result[v.AssetID]
+		if ok {
+			result[v.AssetID] = amout + v.Value
+		} else {
+			result[v.AssetID] = v.Value
+		}
+	}
+	return result, nil
+}
+
+
+func (tx *Transaction) GetProgramHashes()([]common.Uint160,error){
+	if tx == nil {
+		return []common.Uint160{},errors.New("getprogramhash tx is nil")
+	}
+	hashs := []common.Uint160{}
+	uniqHashs := []common.Uint160{}
+	referenceWithUTXo_output,err := tx.GetReference()
+	if err != nil{
+		return nil,NewDetailErr(err,ErrNoCode,"tx getReference error")
+	}
+	for _,output := range referenceWithUTXo_output{
+		programHash := output.ProgramHash
+		hashs = append(hashs, programHash)
+	}
+	for _, attribute := range tx.Attributes {
+		if attribute.Usage == Script {
+			dataHash, err := common.Uint160ParseFromBytes(attribute.Data)
+			if err != nil {
+				return nil, NewDetailErr(errors.New("[Transaction], GetProgramHashes err."), ErrNoCode, "")
+			}
+			hashs = append(hashs, common.Uint160(dataHash))
+		}
+	}
+	switch tx.TxType {
+	case RegisterAsset:
+		issuer := tx.Payload.(*payload.RegisterAsset).Issuer
+		signatureRedeemScript, err := contract.CreateSignatureRedeemScript(issuer)
+		if err != nil {
+			return nil, NewDetailErr(err, ErrNoCode, "[Transaction], GetProgramHashes CreateSignatureRedeemScript failed.")
+		}
+
+		astHash, err := common.ToCodeHash(signatureRedeemScript)
+		if err != nil {
+			return nil, NewDetailErr(err, ErrNoCode, "[Transaction], GetProgramHashes ToCodeHash failed.")
+		}
+		hashs = append(hashs, astHash)
+	case LockAsset:
+		hashs = append(hashs, tx.Payload.(*payload.LockAsset).ProgramHash)
+	case IssueAsset:
+		result := tx.GetMergedAssetIDValueFromOutputs()
+		if err != nil {
+			return nil, NewDetailErr(err, ErrNoCode, "[Transaction], GetTransactionResults failed.")
+		}
+		for k := range result {
+			tx, err := TxStore.GetTransaction(k)
+			if err != nil {
+				return nil, NewDetailErr(err, ErrNoCode, fmt.Sprintf("[Transaction], GetTransaction failed With AssetID:=%x", k))
+			}
+			if tx.TxType != RegisterAsset {
+				return nil, NewDetailErr(errors.New("[Transaction] error"), ErrNoCode, fmt.Sprintf("[Transaction], Transaction Type ileage With AssetID:=%x", k))
+			}
+
+			switch v1 := tx.Payload.(type) {
+			case *payload.RegisterAsset:
+				hashs = append(hashs, v1.Controller)
+			default:
+				return nil, NewDetailErr(errors.New("[Transaction] error"), ErrNoCode, fmt.Sprintf("[Transaction], payload is illegal", k))
+			}
+		}
+	case DataFile:
+		issuer := tx.Payload.(*payload.DataFile).Issuer
+		signatureRedeemScript, err := contract.CreateSignatureRedeemScript(issuer)
+		if err != nil {
+			return nil, NewDetailErr(err, ErrNoCode, "[Transaction], GetProgramHashes CreateSignatureRedeemScript failed.")
+		}
+
+		astHash, err := common.ToCodeHash(signatureRedeemScript)
+		if err != nil {
+			return nil, NewDetailErr(err, ErrNoCode, "[Transaction], GetProgramHashes ToCodeHash failed.")
+		}
+		hashs = append(hashs, astHash)
+	case TransferAsset:
+	case Record:
+	case DeployCode:
+	case InvokeCode:
+		issuer := tx.Payload.(*payload.InvokeCode).ProgramHash
+		hashs = append(hashs, issuer)
+	case BookKeeper:
+		issuer := tx.Payload.(*payload.BookKeeper).Issuer
+		signatureRedeemScript, err := contract.CreateSignatureRedeemScript(issuer)
+		if err != nil {
+			return nil, NewDetailErr(err, ErrNoCode, "[Transaction - BookKeeper], GetProgramHashes CreateSignatureRedeemScript failed.")
+		}
+
+		astHash, err := common.ToCodeHash(signatureRedeemScript)
+		if err != nil {
+			return nil, NewDetailErr(err, ErrNoCode, "[Transaction - BookKeeper], GetProgramHashes ToCodeHash failed.")
+		}
+		hashs = append(hashs, astHash)
+	case PrivacyPayload:
+		issuer := tx.Payload.(*payload.PrivacyPayload).EncryptAttr.(*payload.EcdhAes256).FromPubkey
+		signatureRedeemScript, err := contract.CreateSignatureRedeemScript(issuer)
+		if err != nil {
+			return nil, NewDetailErr(err, ErrNoCode, "[Transaction], GetProgramHashes CreateSignatureRedeemScript failed.")
+		}
+
+		astHash, err := common.ToCodeHash(signatureRedeemScript)
+		if err != nil {
+			return nil, NewDetailErr(err, ErrNoCode, "[Transaction], GetProgramHashes ToCodeHash failed.")
+		}
+		hashs = append(hashs, astHash)
+	default:
+	}
+	//remove dupilicated hashes
+	uniq := make(map[common.Uint160]bool)
+	for _, v := range hashs {
+		uniq[v] = true
+	}
+	for k := range uniq {
+		uniqHashs = append(uniqHashs, k)
+	}
+	sort.Sort(byProgramHashes(uniqHashs))
+	return uniqHashs, nil
+}
+
+func (tx *Transaction) SetPrograms(programs []*program.Program) {
+	tx.Programs = programs
+}
+
+func (tx *Transaction) GetPrograms() []*program.Program {
+	return tx.Programs
+}
+
+func (tx *Transaction) GetOutputHashes() ([]common.Uint160, error) {
+	//TODO: implement Transaction.GetOutputHashes()
+
+	return []common.Uint160{}, nil
+}
+
+func (tx *Transaction) GenerateAssetMaps() {
+	//TODO: implement Transaction.GenerateAssetMaps()
+}
+
+func (tx *Transaction) GetMessage() []byte {
+	return sig.GetHashData(tx)
+}
+
+func (tx *Transaction) ToArray() []byte {
+	b := new(bytes.Buffer)
+	tx.Serialize(b)
+	return b.Bytes()
+}
+
+func (tx *Transaction) Hash() common.Uint256 {
+	if tx.hash == nil {
+		d := sig.GetHashData(tx)
+		temp := sha256.Sum256([]byte(d))
+		f := common.Uint256(sha256.Sum256(temp[:]))
+		tx.hash = &f
+	}
+	return *tx.hash
+
+}
+
+func (tx *Transaction) SetHash(hash common.Uint256) {
+	tx.hash = &hash
+}
+
+func (tx *Transaction) Type() common.InventoryType {
+	return common.TRANSACTION
+}
+func (tx *Transaction) Verify() error {
+	//TODO: Verify()
+	return nil
+}
+
+func (tx *Transaction) GetReference() (map[*UTXOTxInput]*TxOutput, error) {
+	if tx.TxType == RegisterAsset {
+		return nil, nil
+	}
+	//UTXO input /  Outputs
+	reference := make(map[*UTXOTxInput]*TxOutput)
+	// Key index，v UTXOInput
+	for _, utxo := range tx.UTXOInputs {
+		transaction, err := TxStore.GetTransaction(utxo.ReferTxID)
+		if err != nil {
+			return nil, NewDetailErr(err, ErrNoCode, "[Transaction], GetReference failed.")
+		}
+		index := utxo.ReferTxOutputIndex
+		reference[utxo] = transaction.Outputs[index]
+	}
+	return reference, nil
+}
+func (tx *Transaction) GetTransactionResults() (TransactionResult, error) {
+	result := make(map[common.Uint256]common.Fixed64)
+	outputResult := tx.GetMergedAssetIDValueFromOutputs()
+	InputResult, err := tx.GetMergedAssetIDValueFromReference()
+	if err != nil {
+		return nil, err
+	}
+	//calc the balance of input vs output
+	for outputAssetid, outputValue := range outputResult {
+		if inputValue, ok := InputResult[outputAssetid]; ok {
+			result[outputAssetid] = inputValue - outputValue
+		} else {
+			result[outputAssetid] -= outputValue
+		}
+	}
+	for inputAssetid, inputValue := range InputResult {
+		if _, exist := result[inputAssetid]; !exist {
+			result[inputAssetid] += inputValue
+		}
+	}
+	return result, nil
+}
+
+func (tx *Transaction) GetMergedAssetIDValueFromOutputs() TransactionResult {
+	var result = make(map[common.Uint256]common.Fixed64)
+	for _, v := range tx.Outputs {
+		amout, ok := result[v.AssetID]
+		if ok {
+			result[v.AssetID] = amout + v.Value
+		} else {
+			result[v.AssetID] = v.Value
+		}
+	}
+	return result
+}
+
+
+
+
+func ParseMultisigTransactionCode(code []byte) []common.Uint160{
+	if len(code) < MinMultisigCodeLen{
+		log.Error("code not enough in multisig transaction detected")
+		return nil
+	}
+	//remove the last 2
+	code = code[:len(code)-2]
+	//remove the first
+	code = code[1:]
+	if len(code)%(PublickKeyScriptLen-1) != 0{
+		log.Error("invalid code in multisig transaction detected")
+		return nil
+	}
+	var programHash []common.Uint160
+	for i:=0;i<len(code);i+=PublickKeyScriptLen-1{
+		script := make([]byte,PublickKeyScriptLen-1)
+		copy(script,code[i:i+PublickKeyScriptLen-1])
+		script = append(script,0xac)
+		hash,_ := common.ToCodeHash(script)
+		programHash = append(programHash,hash)
+	}
+	return programHash
+}
+
+func (tx *Transaction) ParseTransactionCode() []common.Uint160{
+	code := make([]byte,len(tx.Programs[0].Code))
+	copy(code,tx.Programs[0].Code)
+	return ParseMultisigTransactionCode(code)
+}
+
+func (tx *Transaction) ParseTransactionSig()(havesig,needsig int,err error){
+	if len(tx.Programs) < 1 {
+		return -1,-1,errors.New("missing transaction program")
+	}
+	x := len(tx.Programs[0].Parameter)/SignatureScriptLen
+	y := len(tx.Programs[0].Parameter)%SignatureScriptLen
+	return x,y,nil
+}
+
+
+func (tx *Transaction) AppendNewSignature(sig []byte) error {
+	if len(tx.Programs) < 0{
+		return errors.New("missing transaction program")
+	}
+	newsig := []byte{}
+	newsig = append(newsig,byte(len(sig)))
+	newsig = append(newsig,sig...)
+	havesig,_,err := tx.ParseTransactionSig()
+	if err != nil {
+		return err
+	}
+	existedsigs := tx.Programs[0].Parameter[0 : havesig*SignatureScriptLen]
+	leftsigs := tx.Programs[0].Parameter[havesig*SignatureScriptLen+1:]
+
+	tx.Programs[0].Parameter = nil
+	tx.Programs[0].Parameter = append(tx.Programs[0].Parameter, existedsigs...)
+	tx.Programs[0].Parameter = append(tx.Programs[0].Parameter, newsig...)
+	tx.Programs[0].Parameter = append(tx.Programs[0].Parameter, leftsigs...)
+
+	return nil
+}
+
+
+
+
+type byProgramHashes []common.Uint160
+
+func (a byProgramHashes) Len() int      { return len(a) }
+func (a byProgramHashes) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a byProgramHashes) Less(i, j int) bool {
+	if a[i].CompareTo(a[j]) > 0 {
+		return false
+	} else {
+		return true
+	}
 }
 

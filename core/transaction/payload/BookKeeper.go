@@ -23,7 +23,7 @@ type BookKeeper struct {
 	Issuer *crypto.PubKey
 }
 
-func (bk *BookKeeper) Data(version int) []byte{
+func (bk *BookKeeper) Data(version byte) []byte{
 	buf := new(bytes.Buffer)
 
 	bk.PubKey.Serialize(buf)
@@ -34,8 +34,8 @@ func (bk *BookKeeper) Data(version int) []byte{
 	return buf.Bytes()
 }
 
-func (bk *BookKeeper) Serialize(w io.Writer) error{
-	_,err := w.Write(bk.Data(byte(1)))
+func (bk *BookKeeper) Serialize(w io.Writer,version byte) error{
+	_,err := w.Write(bk.Data(version))
 	return err
 }
 

@@ -19,6 +19,6 @@ type IStore interface {
 	BatchPut(key []byte,value []byte) error
 	BatchDelete(key []byte) error
 	BatchCommit() error
-	Colse() error
+	Close() error
 	NewIterator(prefix []byte) IIterator
 }

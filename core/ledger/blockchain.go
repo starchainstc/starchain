@@ -7,6 +7,7 @@ import (
 	."starchain/errors"
 	"starchain/common/log"
 	."starchain/common"
+	tx"starchain/core/transaction"
 )
 
 type Blockchain struct {
@@ -30,6 +31,12 @@ func NewBlockchainWithGenesisBlock(defBookKeeper []*crypto.PubKey) (*Blockchain,
 	genesisBlock.RebuildMerkleRoot()
 	hashx := genesisBlock.Hash()
 	genesisBlock.hash = &hashx
+	height, err := DefaultLedger.Store.InitLedgerStoreWithGenesisBlock(genesisBlock, defBookKeeper)
+	if err != nil {
+		return nil, NewDetailErr(err, ErrNoCode, "[Blockchain], InitLevelDBStoreWithGenesisBlock failed.")
+	}
+	blockchain := NewBlockchain(height)
+	return blockchain, nil
 }
 
 func (bc *Blockchain) AddBlock(block *Block) error {

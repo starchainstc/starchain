@@ -4,6 +4,8 @@ import (
 	"io"
 	"starchain/common/serialization"
 	"bytes"
+	"errors"
+	."starchain/errors"
 )
 
 type AssetType byte
@@ -45,18 +47,21 @@ func (asset *Asset) Serialize(w io.Writer) error{
 	if err != nil {
 		return err
 	}
-	err = serialization.WriteBool(w,asset.Precision)
-	if err != nil {
-		return err
-	}
-	err = serialization.WriteBool(w,asset.AssetType)
-	if err != nil {
-		return err
-	}
-	err = serialization.WriteBool(w,asset.RecordType)
-	if err != nil {
-		return err
-	}
+	w.Write([]byte{byte(asset.Precision)})
+	//err = serialization.WriteByte(w,asset.Precision)
+	//if err != nil {
+	//	return err
+	//}
+	w.Write([]byte{byte(asset.AssetType)})
+	//err = serialization.WriteByte(w,asset.AssetType)
+	//if err != nil {
+	//	return err
+	//}
+	w.Write([]byte{byte(asset.RecordType)})
+	//err = serialization.WriteByte(w,asset.RecordType)
+	//if err != nil {
+	//	return err
+	//}
 	return nil
 }
 
@@ -71,17 +76,24 @@ func (asset *Asset) Deserialize(r io.Reader) error{
 		return err
 	}
 	asset.Description = desc
-	asset.Precision,err = serialization.ReadByte(r)
-	if err != nil {
-		return err
+	p := make([]byte,1)
+	n,err :=r.Read(p)
+	if n > 0 {
+		asset.Precision = p[0]
+	}else{
+		return NewDetailErr(errors.New("deserical asset precision error"),ErrNoCode,"")
 	}
-	asset.AssetType ,err = serialization.ReadByte(r)
-	if err != nil {
-		return err
+	n,err =r.Read(p)
+	if n > 0 {
+		asset.AssetType = AssetType(p[0])
+	}else{
+		return NewDetailErr(errors.New("deserical asset assetType error"),ErrNoCode,"")
 	}
-	asset.RecordType,err = serialization.ReadByte(r)
-	if err != nil {
-		return err
+	n,err =r.Read(p)
+	if n > 0 {
+		asset.RecordType = AssetRecordType(p[0])
+	}else{
+		return NewDetailErr(errors.New("deserical asset recordtype error"),ErrNoCode,"")
 	}
 	return err
 }

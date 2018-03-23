@@ -27,7 +27,7 @@ func NewTxAttribute(u TransactionAttributeUsage,data []byte) TxAttribute{
 	tx := TxAttribute{}
 	tx.Usage = u
 	tx.Data = data
-	tx.Size = len(data)
+	tx.Size = uint32(len(data))
 	return tx
 }
 

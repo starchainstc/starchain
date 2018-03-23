@@ -14,7 +14,7 @@ const RegisterPayloadVersion byte = 0x00
 type RegisterAsset struct {
 	Asset		*asset.Asset
 	Amount 		common.Fixed64
-	Issuer		crypto.PubKey
+	Issuer		*crypto.PubKey
 	Controller	common.Uint160
 }
 func (a *RegisterAsset) Data(version byte) []byte {

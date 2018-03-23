@@ -7,7 +7,6 @@ import (
 	"starchain/core/store"
 	"math/big"
 	"starchain/common"
-	"starchain/smartcontract/states"
 )
 
 type DBCache struct {
