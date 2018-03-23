@@ -21,6 +21,8 @@ import (
 	"starchain/core/transaction"
 	"starchain/core/ledger"
 	"errors"
+	"io"
+	."starchain/net/message"
 )
 
 type node struct {
@@ -39,7 +41,7 @@ type node struct {
 	local		*node
 	nbrNodes
 	eventQueue
-	TXPool
+	TXNPool
 	idCache
 
 	flightHeights	[]uint32
@@ -48,7 +50,7 @@ type node struct {
 	lastContact 	time.Time
 	nodeDisconnectSubscriber	events.Subscriber
 	tryTimes	uint32
-	cachedHashes	[]common.Uint256
+	cachedHashes	[]Uint256
 	ConnectingNodes
 	RetryConnAddrs
 }
@@ -195,6 +197,48 @@ func (n *node) NodeDisconnect(v interface{}) {
 		conn.Close()
 	}
 }
+
+//read from node
+func (node *node) rx() {
+	conn := node.getConn()
+	buf := make([]byte, MAXBUFLEN)
+	for {
+		len, err := conn.Read(buf[0:(MAXBUFLEN - 1)])
+		buf[MAXBUFLEN-1] = 0 //Prevent overflow
+		switch err {
+		case nil:
+			t := time.Now()
+			node.UpdateRXTime(t)
+			unpackNodeBuf(node, buf[0:len])
+		case io.EOF:
+			log.Error("Rx io.EOF: ", err, ", node id is ", node.GetID())
+			goto DISCONNECT
+		default:
+			log.Error("Read connection error ", err)
+			goto DISCONNECT
+		}
+	}
+
+	DISCONNECT:
+	node.local.eventQueue.GetEvent("disconnect").Notify(events.EventNodeDisconnect, node)
+}
+
+//send to node
+func (node *node) Tx(buf []byte) {
+	log.Debugf("TX buf length: %d\n%x", len(buf), buf)
+
+	if node.GetState() == INACTIVITY {
+		return
+	}
+	_, err := node.conn.Write(buf)
+	if err != nil {
+		log.Error("Error sending messge to peer node ", err.Error())
+		node.local.eventQueue.GetEvent("disconnect").Notify(events.EventNodeDisconnect, node)
+	}
+}
+
+
+
 
 func rmNode(node *node) {
 	log.Debug(fmt.Sprintf("Remove unused/deuplicate node: 0x%0x", node.id))
@@ -400,10 +444,11 @@ func (node *node) SetBookKeeperAddr(pk *crypto.PubKey) {
 func (node *node) SyncNodeHeight() {
 	for {
 		heights, _ := node.GetNeighborHeights()
+		//log.Info("neighbor height:",heights,ledger.DefaultLedger.Blockchain.BlockHeight)
 		if CompareHeight(uint64(ledger.DefaultLedger.Blockchain.BlockHeight), heights) {
 			break
 		}
-		<-time.After(5 * time.Second)
+		<-time.After(1 * time.Second)
 	}
 }
 

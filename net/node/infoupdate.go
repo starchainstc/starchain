@@ -27,6 +27,7 @@ func (node *node) GetBlkHdrs() {
 	}
 	nodelist := []Noder{}
 	for _, v := range noders {
+		log.Info("height:",v.GetHeight())
 		if uint64(ledger.DefaultLedger.Store.GetHeaderHeight()) < v.GetHeight() {
 			nodelist = append(nodelist, v)
 		}
@@ -232,14 +233,14 @@ func (node *node) updateNodeInfo() {
 }
 
 func (node *node) updateConnection() {
-	t := time.NewTimer(time.Second * CONNMONITOR)
+	t := time.NewTicker(time.Second * CONNMONITOR)
 	for {
 		select {
 		case <-t.C:
 			node.ConnectSeeds()
 			node.TryConnect()
-			t.Stop()
-			t.Reset(time.Second * CONNMONITOR)
+			//t.Stop()
+			//t.Reset(time.Second * CONNMONITOR)
 		}
 	}
 

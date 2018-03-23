@@ -4,12 +4,9 @@ import (
 	"net"
 	"time"
 	"starchain/net/protocol"
-	"starchain/core/ledger"
 	msg"starchain/net/message"
 	."starchain/common/config"
 	"starchain/common/log"
-	"io"
-	"starchain/events"
 	"os"
 	"crypto/tls"
 	"strconv"
@@ -54,7 +51,7 @@ func unpackNodeBuf(node *node,buf []byte){
 			return
 		}
 		node.rxBuf.len = msg.PayloadLen(node.rxBuf.p)
-		buf := buf[length:]
+		buf = buf[length:]
 	}
 
 	msgLen = node.rxBuf.len
@@ -77,29 +74,6 @@ func unpackNodeBuf(node *node,buf []byte){
 }
 
 
-func (node *node) rx() {
-	conn := node.getConn()
-	buf := make([]byte, protocol.MAXBUFLEN)
-	for {
-		len, err := conn.Read(buf[0:(protocol.MAXBUFLEN - 1)])
-		buf[protocol.MAXBUFLEN-1] = 0 //Prevent overflow
-		switch err {
-		case nil:
-			t := time.Now()
-			node.UpdateRXTime(t)
-			unpackNodeBuf(node, buf[0:len])
-		case io.EOF:
-			log.Error("Rx io.EOF: ", err, ", node id is ", node.GetID())
-			goto DISCONNECT
-		default:
-			log.Error("Read connection error ", err)
-			goto DISCONNECT
-		}
-	}
-
-	DISCONNECT:
-	node.local.eventQueue.GetEvent("disconnect").Notify(events.EventNodeDisconnect, node)
-}
 
 func printIPAddr() {
 	host, _ := os.Hostname()
@@ -297,15 +271,4 @@ func TLSDial(nodeAddr string) (net.Conn, error) {
 	return conn, nil
 }
 
-func (node *node) Tx(buf []byte) {
-	log.Debugf("TX buf length: %d\n%x", len(buf), buf)
 
-	if node.GetState() == protocol.INACTIVITY {
-		return
-	}
-	_, err := node.conn.Write(buf)
-	if err != nil {
-		log.Error("Error sending messge to peer node ", err.Error())
-		node.local.eventQueue.GetEvent("disconnect").Notify(events.EventNodeDisconnect, node)
-	}
-}
