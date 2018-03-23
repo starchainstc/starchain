@@ -73,7 +73,7 @@ func NewStore(file string) (IStore, error) {
 
 func NewLedgerStore() (ILedgerStore, error) {
 	// TODO: read config file decide which db to use.
-	cs, err := NewChainStore("Chain")
+	cs, err := NewChainStore("chain")
 	if err != nil {
 		return nil, err
 	}
@@ -1310,7 +1310,6 @@ func (self *ChainStore) handlePersistHeaderTask(header *Header) {
 
 func (self *ChainStore) SaveBlock(b *Block, ledger *Ledger) error {
 	log.Debug("SaveBlock()")
-
 	self.mu.RLock()
 	headerHeight := uint32(len(self.headerIndex))
 	currBlockHeight := self.currentBlockHeight
@@ -1321,8 +1320,7 @@ func (self *ChainStore) SaveBlock(b *Block, ledger *Ledger) error {
 	}
 
 	if b.Blockdata.Height > headerHeight {
-		log.Infof("Info: [SaveBlock] block height - headerIndex.count >= 1, block height:%d, headerIndex.count:%d",
-			b.Blockdata.Height, headerHeight)
+		log.Infof("Info: [SaveBlock] block height - headerIndex.count >= 1, block height:%d  headerIndex.count:%d", b.Blockdata.Height, headerHeight)
 		return nil
 	}
 
