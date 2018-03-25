@@ -115,6 +115,7 @@ func (bd *Blockdata) GetProgramHashes() ([]Uint160,error){
 	}else{
 		prev_header, err := DefaultLedger.Store.GetHeader(bd.PrevBlockHash)
 		if err != nil {
+			//log.Trace("can't get header")
 			return programHash, err
 		}
 		programHash = append(programHash, prev_header.Blockdata.NextBookKeeper)
