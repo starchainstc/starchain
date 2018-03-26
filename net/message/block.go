@@ -50,7 +50,7 @@ func (msg block) Handle(node Noder) error {
 		//haven`t require this block ,relay hash
 		node.LocalNode().Relay(node, hash)
 	}
-	log.Info("send block notice")
+	//log.Info("send block notice")
 	node.LocalNode().GetEvent("block").Notify(events.EventNewInventory, &msg.blk)
 	return nil
 }

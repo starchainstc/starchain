@@ -27,7 +27,7 @@ func (node *node) GetBlkHdrs() {
 	}
 	nodelist := []Noder{}
 	for _, v := range noders {
-		log.Info("height:",v.GetHeight())
+		//log.Info("height:",v.GetHeight())
 		if uint64(ledger.DefaultLedger.Store.GetHeaderHeight()) < v.GetHeight() {
 			nodelist = append(nodelist, v)
 		}
@@ -214,7 +214,7 @@ func (n *node) fetchRetryNodeFromNeiborList() int {
 // a node map method
 // Fixme the Nodes should be a parameter
 func (node *node) updateNodeInfo() {
-	ticker := time.NewTicker(time.Second * PERIODUPDATETIME)
+	ticker := time.NewTicker(time.Second * PERIODUPDATETIME-2)
 	quit := make(chan struct{})
 	for {
 		select {

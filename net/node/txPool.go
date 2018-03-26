@@ -37,11 +37,11 @@ func (this *TXNPool) init() {
 func (this *TXNPool) AppendTxnPool(txn *transaction.Transaction, poolVerify bool) ErrCode {
 	//verify transaction with Concurrency
 	if errCode := va.VerifyTransaction(txn); errCode != ErrNoError {
-		log.Info("Transaction verification failed", txn.Hash())
+		log.Error("Transaction verification failed", txn.Hash())
 		return errCode
 	}
 	if errCode := va.VerifyTransactionWithLedger(txn, ledger.DefaultLedger); errCode != ErrNoError {
-		log.Info("Transaction verification with ledger failed", txn.Hash())
+		log.Error("Transaction verification with ledger failed", txn.Hash())
 		return errCode
 	}
 	if poolVerify {
