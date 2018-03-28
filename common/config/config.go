@@ -15,24 +15,24 @@ const (
 var Version string
 
 type Configuration struct {
-	Magic           int64              `json:"Magic"`  //magic code for blockchain data file
-	Version         int                `json:"Version"`  //version of starchain
-	SeedList        []string           `json:"SeedList"`  //list of seed
+	MagicCode       int64              `json:"MagicCode"`  //magic code for blockchain data file
+	Version         int                `json:"ver"`  //version of starchain
+	SeedList        []string           `json:"VerifyList"`  //list of seed
 	BookKeepers     []string           `json:"BookKeepers"` // The default book keepers' publickey
-	HttpRestPort    int                `json:"HttpRestPort"`
+	HttpRestPort    int                `json:"RestPort"`
 	RestCertPath    string             `json:"RestCertPath"` // certification file path
 	RestKeyPath     string             `json:"RestKeyPath"` //certification key file path
-	HttpInfoPort    uint16             `json:"HttpInfoPort"` // http api port
-	HttpInfoStart   bool               `json:"HttpInfoStart"`
-	HttpWsPort      int                `json:"HttpWsPort"`
-	HttpJsonPort    int                `json:"HttpJsonPort"`
-	OauthServerUrl  string             `json:"OauthServerUrl"`
-	NoticeServerUrl string             `json:"NoticeServerUrl"`
+	HttpInfoPort    uint16             `json:"HttpApiPort"` // http api port
+	HttpInfoStart   bool               `json:"HttpApiStart"`
+	HttpWsPort      int                `json:"WsPort"`
+	HttpJsonPort    int                `json:"JsonPort"`
+	OauthServerUrl  string             `json:"OauthUrl"`
+	NoticeServerUrl string             `json:"NoticeUrl"`
 	NodePort        int                `json:"NodePort"`
 	NodeType        string             `json:"NodeType"`
 	WebSocketPort   int                `json:"WebSocketPort"`
-	PrintLevel      int                `json:"PrintLevel"`
-	IsTLS           bool               `json:"IsTLS"`
+	PrintLevel      string             `json:"LogLevel"`
+	IsTLS           bool               `json:"Tls"`
 	CertPath        string             `json:"CertPath"`
 	KeyPath         string             `json:"KeyPath"`
 	CAPath          string             `json:"CAPath"`

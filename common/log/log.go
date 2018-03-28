@@ -21,7 +21,6 @@ const (
 	Red	=  "0:31"
 	Green	=  "0:32"
 	Yellow	=  "0:33"
-	Cyan	=  "0:36"
 	Pink	=  "1:35"
 )
 
@@ -87,7 +86,7 @@ func LevelName(level int) string{
 
 func NameLevel(name string) int{
 	for k,v := range levels{
-		if v == name {
+		if strings.Index(v,name)>0{
 			return k
 		}
 	}
@@ -98,9 +97,10 @@ func NameLevel(name string) int{
 	return level
 }
 
-func New(out io.Writer, prefix string, flag, level int, file *os.File) *Logger {
+func New(out io.Writer, prefix string, flag int, level string, file *os.File) *Logger {
+	logLevel := NameLevel(level)
 	return &Logger{
-		level:   level,
+		level:   logLevel,
 		logger:  log.New(out, prefix, flag),
 		logFile: file,
 	}
@@ -131,10 +131,9 @@ func (l *Logger) Output(level int, a ...interface{}) error {
 func (l *Logger) Outputf(level int, format string, v ...interface{}) error {
 	if level >= l.level {
 		gid := GetGID()
-		v = append([]interface{}{LevelName(level), "GID",
-			gid}, v...)
+		v = append([]interface{}{LevelName(level), "GID", gid}, v...)
 
-		return l.logger.Output(callDepth, fmt.Sprintf("%s, "+format+"\n", v...))
+		return l.logger.Output(callDepth, fmt.Sprintf("%s %s %d, "+format+"\n", v...))
 	}
 	return nil
 }
@@ -304,7 +303,7 @@ func FileOpen(path string) (*os.File, error) {
 		return nil, err
 	}
 
-	var currenttime string = time.Now().Format("2006-01-02_15.04.05")
+	var currenttime = time.Now().Format("2006-01-02_15.04.05")
 
 	logfile, err := os.OpenFile(path+currenttime+"_LOG.log", os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
@@ -338,8 +337,9 @@ func Init(a ...interface{}) {
 		}
 	}
 	fileAndStdoutWrite := io.MultiWriter(writers...)
-	var printlevel int = config.Parameters.PrintLevel
-	Log = New(fileAndStdoutWrite, "", log.Ldate|log.Lmicroseconds, printlevel, logFile)
+	var printlevel = strings.ToUpper(config.Parameters.PrintLevel)
+
+	Log = New(fileAndStdoutWrite, "STC-", log.Ldate|log.Lmicroseconds, printlevel, logFile)
 }
 
 func GetLogFileSize() (int64, error) {
