@@ -81,12 +81,12 @@ func viewHander(w http.ResponseWriter,r *http.Request){
 			}
 		}
 		ngbAddr = ngbNodes[i].GetAddr()
-		ngbInfoPort = ngbNodes[i].GetPort()
-		ngbInfoState = ngbNodes[i].GetState()
-		ngbHttpInfoAddr = ngbAddr+":"+strconv.Itoa(ngbInfoPort)
+		ngbInfoPort = ngbNodes[i].GetHttpInfoPort()
+		ngbInfoState = ngbNodes[i].GetHttpInfoState()
+		ngbHttpInfoAddr = ngbAddr+":"+strconv.Itoa(int(ngbInfoPort))
 		ngbId = fmt.Sprintf("0x%x",ngbNodes[i].GetID())
 		ngbInfo := newNgbNodeInfo(ngbId,ngbType,ngbAddr,ngbHttpInfoAddr,ngbInfoPort,ngbInfoState)
-		ngbrNodersInfo = append(ngbrNodersInfo,ngbInfo)
+		ngbrNodersInfo = append(ngbrNodersInfo,*ngbInfo)
 	}
 	sort.Sort(NgbNodeInfoSlice(ngbrNodersInfo))
 	blockHeight := ledger.DefaultLedger.Blockchain.BlockHeight
