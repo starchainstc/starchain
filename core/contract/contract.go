@@ -7,7 +7,7 @@ import (
 	"bytes"
 	"errors"
 	"io"
-	"STC/vm/avm"
+	"starchain/vm/avm"
 )
 
 //Contract address is the hash of contract program .
