@@ -23,7 +23,7 @@ func NewBlockchain(height uint32) *Blockchain{
 	}
 }
 
-func NewBlockchainWithGenesisBlock(defBookKeeper []*crypto.PubKey) (*Blockchain,error){
+func GenesisBlock(defBookKeeper []*crypto.PubKey) (*Blockchain,error){
 	genesisBlock,err := GenesisBlockInit(defBookKeeper)
 	if err != nil {
 		return nil, NewDetailErr(err, ErrNoCode, "[Blockchain], NewBlockchainWithGenesisBlock failed.")
