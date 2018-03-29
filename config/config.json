@@ -1,12 +1,12 @@
 {
   "Configuration": {
-    "MagicCode": 7630408,
-    "ver":2,
+    "MagicCode": 5841263,
+    "ver":1,
     "VerifyList": [
-      "120.76.147.200:10338",
-      "120.25.99.139:10338",
-      "120.24.204.25:10338",
-      "120.76.169.242:10338"
+      "120.76.147.200:25887",
+      "120.25.99.139:25887",
+      "120.24.204.25:25887",
+      "120.76.169.242:25887"
     ],
     "BookKeepers": [
       "035f472226aafa17287077156774d0973cef2012efdbe1dce67531f5212b6aa202",
@@ -14,12 +14,11 @@
       "02b55e5d911ad3cecfe00d370d60be1f5a35e8d79f39bd8a23aa99d1b754f71d4b",
       "032b7abe34142e2cb18b3b700d55c5e32bdbc211db653616ded86fa1f05dd1fe87"
     ],
-    "HttpApiPort": 20333,
+    "HttpApiPort": 25883,
     "HttpApiStart": true,
-    "RestPort": 20334,
-    "WsPort":20335,
-    "JsonPort": 20336,
-    "NodePort": 10338,
+    "RestPort": 25884,
+    "JsonPort": 25886,
+    "NodePort": 25887,
     "NodeType": "verify",
     "LogLevel": "info",
     "MaxLogSize": 200,
