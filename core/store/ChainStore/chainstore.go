@@ -462,7 +462,7 @@ func (bd *ChainStore) GetHeader(hash Uint256) (*Header, error) {
 	prefix := []byte{byte(DATA_Header)}
 	log.Debug("GetHeader Data:", hash.ToArray())
 	data, err_get := bd.st.Get(append(prefix, hash.ToArray()...))
-	//log.Debug( "Get Header Data: %x\n",  data )
+	//log.Trace( "Get Header Data: %x\n",  data )
 	if err_get != nil {
 		//TODO: implement error process
 		return nil, err_get
@@ -1323,7 +1323,7 @@ func (self *ChainStore) SaveBlock(b *Block, ledger *Ledger) error {
 		log.Infof("Info: [SaveBlock] block height - headerIndex.count >= 1, block height:%d  headerIndex.count:%d", b.Blockdata.Height, headerHeight)
 		return nil
 	}
-
+	//log.Tracef("headerheight:%d",headerHeight)
 	if b.Blockdata.Height == headerHeight {
 		err := validation.VerifyBlock(b, ledger, false)
 		if err != nil {
@@ -1339,7 +1339,6 @@ func (self *ChainStore) SaveBlock(b *Block, ledger *Ledger) error {
 			return err
 		}
 	}
-
 	self.taskCh <- &persistBlockTask{block: b, ledger: ledger}
 	return nil
 }
