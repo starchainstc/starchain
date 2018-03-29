@@ -8,10 +8,10 @@ import (
 	"starchain/core/ledger"
 	"bytes"
 	"encoding/binary"
-	"github.com/ethereum/go-ethereum/log"
 	"crypto/sha256"
 	"errors"
 	"fmt"
+	"starchain/common/log"
 )
 
 const (
