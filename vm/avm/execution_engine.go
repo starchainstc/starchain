@@ -6,7 +6,7 @@ import (
 	_ "math/big"
 	_ "sort"
 	. "starchain/vm/avm/errors"
-	"STC/common"
+	"starchain/common"
 )
 
 const (
