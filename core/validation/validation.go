@@ -8,11 +8,13 @@ import (
 	."starchain/common"
 	."starchain/errors"
 	"starchain/crypto"
+	"starchain/common/log"
 )
 
 func VerifySignableData(signableData sig.SignableData)(bool,error){
 	hashes,err := signableData.GetProgramHashes()
 	if err != nil {
+		log.Tracef("cat't get programhash")
 		return false,err
 	}
 	programs := signableData.GetPrograms()

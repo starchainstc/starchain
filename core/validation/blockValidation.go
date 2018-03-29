@@ -16,7 +16,6 @@ func VerifyBlock(block *ledger.Block, ld *ledger.Ledger, completely bool) error 
 	if err != nil {
 		return err
 	}
-
 	flag, err := VerifySignableData(block)
 	if flag == false || err != nil {
 		return err
