@@ -55,7 +55,6 @@ func main(){
 	log.Info("start http server")
 	go httprestful.StartServer(node)
 	if protocol.VERIFYNODENAME == config.Parameters.NodeType {
-		log.Info("4. Start DBFT Services")
 		dbftServices := dbft.NewDbftService(cli, "logcon", node)
 		rpchttp.RegistDbftService(dbftServices)
 		go dbftServices.Start()
