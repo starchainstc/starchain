@@ -312,6 +312,10 @@ func FileOpen(path string) (*os.File, error) {
 	return logfile, nil
 }
 
+func init(){
+	Init(Path,Stdout)
+}
+
 func Init(a ...interface{}) {
 	writers := []io.Writer{}
 	var logFile *os.File

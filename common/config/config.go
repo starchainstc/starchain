@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	DefaultConfigFilename = "./config.json"
+	DefaultConfigFilename = "./config/config.json"
 )
 
 var Version string
