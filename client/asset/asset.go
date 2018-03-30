@@ -81,7 +81,7 @@ func parseAction(c *cli.Context) error {
 		return nil
 	}
 	value := c.String("value")
-	if value == ""{
+	if value == "" {
 		fmt.Println("missing parameter [--value]")
 		os.Exit(1)
 	}
@@ -113,7 +113,7 @@ func parseAction(c *cli.Context) error {
 		assetId := parseAssetId(c)
 		addr:= parseAddress(c)
 		wallet := client.OpenWallet(walletName,client.WalletPassword(pwd))
-		txn, err = util.MakeIssueTransaction(wallet, assetId, addr, string(value))
+		txn, err = util.MakeIssueTransaction(wallet, assetId, addr, value)
 		if err = txn.Serialize(&buf);err != nil{
 			fmt.Println("transaction serialize err",err)
 			return err
@@ -125,7 +125,7 @@ func parseAction(c *cli.Context) error {
 		}
 		client.FormatOutput(resp)
 	case c.Bool("transfer"):
-		assetId := parseAssetId(c)
+		assetId := c.String("asset")
 		addr:= parseAddress(c)
 		client.OpenWallet(walletName,client.WalletPassword(pwd))
 		resp,err := rpchttp.Call(client.Address(),"sendtoaddress",0,[]interface{}{assetId,addr,value})
