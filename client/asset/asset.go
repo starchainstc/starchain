@@ -114,6 +114,16 @@ func parseAction(c *cli.Context) error {
 		addr:= parseAddress(c)
 		wallet := client.OpenWallet(walletName,client.WalletPassword(pwd))
 		txn, err = util.MakeIssueTransaction(wallet, assetId, addr, string(value))
+		if err = txn.Serialize(&buf);err != nil{
+			fmt.Println("transaction serialize err",err)
+			return err
+		}
+		resp, err := rpchttp.Call(client.Address(), "sendrawtransaction", 0, []interface{}{BytesToHexString(buf.Bytes())})
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return err
+		}
+		client.FormatOutput(resp)
 	case c.Bool("transfer"):
 		assetId := parseAssetId(c)
 		addr:= parseAddress(c)
@@ -154,8 +164,8 @@ func NewCommand() *cli.Command{
 						Usage:"issue a asset for some address",
 					},
 					cli.BoolFlag{
-						Name:"transfor,t",
-						Usage:"transfor some issue to some addresss",
+						Name:"transfer,t",
+						Usage:"transfer some issue to some addresss",
 					},
 					cli.StringFlag{
 						Name:"asset,a",
