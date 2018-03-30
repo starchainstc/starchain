@@ -258,6 +258,7 @@ func getRawTransaction(params []interface{}) map[string]interface{} {
 // A JSON example for sendrawtransaction method as following:
 //   {"jsonrpc": "2.0", "method": "sendrawtransaction", "params": ["raw transactioin in hex"], "id": 0}
 func sendRawTransaction(params []interface{}) map[string]interface{} {
+	//fmt.Println("###################3")
 	if len(params) < 1 {
 		return STCRpcNil
 	}
@@ -270,10 +271,12 @@ func sendRawTransaction(params []interface{}) map[string]interface{} {
 			return STCRpcInvalidParameter
 		}
 		var txn tx.Transaction
+
 		if err := txn.Deserialize(bytes.NewReader(hex)); err != nil {
+			fmt.Println(err)
 			return STCRpcInvalidTransaction
 		}
-		fmt.Println("this test#############################################################")
+		//fmt.Println("this test#############################################################")
 		//if txn.TxType != tx.InvokeCode && txn.TxType != tx.DeployCode &&
 		//	txn.TxType != tx.TransferAsset && txn.TxType != tx.LockAsset &&
 		//	txn.TxType != tx.BookKeeper {
@@ -801,24 +804,37 @@ func sendToAddress(params []interface{}) map[string]interface{} {
 		return STCRpcNil
 	}
 	var asset, address, value string
-	switch params[0].(type) {
-	case string:
-		asset = params[0].(string)
-	default:
+
+	asset,ok := params[0].(string)
+	if !ok {
 		return STCRpcInvalidParameter
 	}
-	switch params[1].(type) {
-	case string:
-		address = params[1].(string)
-	default:
+	address,ok = params[1].(string)
+	if !ok {
 		return STCRpcInvalidParameter
 	}
-	switch params[2].(type) {
-	case string:
-		value = params[2].(string)
-	default:
+	value,ok = params[2].(string)
+	if !ok {
 		return STCRpcInvalidParameter
 	}
+	//switch params[0].(type) {
+	//case string:
+	//	asset = params[0].(string)
+	//default:
+	//	return STCRpcInvalidParameter
+	//}
+	//switch params[1].(type) {
+	//case string:
+	//	address = params[1].(string)
+	//default:
+	//	return STCRpcInvalidParameter
+	//}
+	//switch params[2].(type) {
+	//case string:
+	//	value = params[2].(string)
+	//default:
+	//	return STCRpcInvalidParameter
+	//}
 	if Wallet == nil {
 		return STCRpc("error : wallet is not opened")
 	}
