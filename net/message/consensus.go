@@ -110,6 +110,7 @@ func (msg consensus) Handle(node Noder) error {
 	log.Debug()
 	cp := &msg.cons
 	if !node.LocalNode().ExistedID(cp.Hash()) {
+		//events.NewEvent().Notify(events.EventNewInventory, cp)
 		node.LocalNode().GetEvent("consensus").Notify(events.EventNewInventory, cp)
 		node.LocalNode().Relay(node, cp)
 		//log.Info("Relay consensus message")

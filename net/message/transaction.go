@@ -35,6 +35,7 @@ func (msg trn) Handle(node protocol.Noder) error {
 		if errCode := node.LocalNode().AppendTxnPool(&(msg.txn), true); errCode != ErrNoError {
 			return errors.New("[message] VerifyTransaction failed when AppendTxnPool.")
 		}
+		//broadcast tx to neighour node
 		node.LocalNode().Relay(node, tx)
 		log.Info("Relay transaction")
 		node.LocalNode().IncRxTxnCnt()
