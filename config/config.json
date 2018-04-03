@@ -9,23 +9,21 @@
       "120.76.169.242:25887"
     ],
     "BookKeepers": [
-      "035f472226aafa17287077156774d0973cef2012efdbe1dce67531f5212b6aa202",
-      "0281ef7c607978cb8726a7fcf85cbc2431efe93d8ea1c5e68736b9efed9f7f439e",
-      "02b55e5d911ad3cecfe00d370d60be1f5a35e8d79f39bd8a23aa99d1b754f71d4b",
-      "032b7abe34142e2cb18b3b700d55c5e32bdbc211db653616ded86fa1f05dd1fe87"
+      "03033d483cf70e90014528609682b13c614d6aa2324595dab19ffbcca15fb2e9b7",
+      "02a217f87f445bea3fea04540d2e73f702085dbcafa30bc68d3c960e23accbd617",
+      "027095cba4c948eff60554edf598f069bd89e33e42f9bc1afb671b6ee779f0ab74",
+      "03c2e67e24baa2fcb1bf9fe2e92b26963e4f9d2958c9ef2c9f3542a0bfad97f2c1"
     ],
-    "HttpApiPort": 25883,
-    "HttpApiStart": true,
     "RestPort": 25884,
     "JsonPort": 25886,
     "NodePort": 25887,
-    "NodeType": "verify",
+    "NodeType": "service",
     "LogLevel": "info",
-    "MaxLogSize": 200,
+    "MaxLogSize": 10,
     "Tls": false,
     "MultiCoreNum": 4,
     "TransactionFee": {
-      "Transfer": 0.0000
+      "Transfer": 0.100
     }
   }
 }
