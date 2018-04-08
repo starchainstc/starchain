@@ -6,6 +6,7 @@ import (
 	"starchain/client/asset"
 	"os"
 	"starchain/client/wallet"
+	"starchain/client/bookeeper"
 )
 
 func main(){
@@ -25,6 +26,7 @@ func main(){
 	app.Commands = []cli.Command{
 		*asset.NewCommand(),
 		*wallet.NewCommand(),
+		*bookeeper.NewCommond(),
 	}
 	app.Run(os.Args)
 }
