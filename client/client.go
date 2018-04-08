@@ -14,6 +14,9 @@ import (
 	"encoding/json"
 	"github.com/urfave/cli"
 	"starchain/common/passwd"
+	"starchain/core/transaction"
+	"starchain/core/signature"
+	"starchain/core/contract"
 )
 
 var (
@@ -90,5 +93,25 @@ func WalletPassword(passwword string) []byte {
 	} else {
 		return []byte(passwword)
 	}
+}
+
+func SignTransaction(signer *account.Account, tx *transaction.Transaction) error {
+	signature, err := signature.SignBySigner(tx, signer)
+	if err != nil {
+		fmt.Println("SignBySigner failed.")
+		return err
+	}
+	transactionContract, err := contract.CreateSignatureContract(signer.PubKey())
+	if err != nil {
+		fmt.Println("CreateSignatureContract failed.")
+		return err
+	}
+	transactionContractContext := contract.NewContractContext(tx)
+	if err := transactionContractContext.AddContract(transactionContract, signer.PubKey(), signature); err != nil {
+		fmt.Println("AddContract failed")
+		return err
+	}
+	tx.SetPrograms(transactionContractContext.GetPrograms())
+	return nil
 }
 
