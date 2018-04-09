@@ -69,6 +69,7 @@ func (tx *TxAttribute) Deserialize(r io.Reader) error {
 	if err != nil {
 		return NewDetailErr(err, ErrNoCode, "Transaction attribute Data deserialization error.")
 	}
+	tx.Size = uint32(len(tx.Data))
 	return nil
 
 }
