@@ -135,7 +135,6 @@ func (bd *Blockdata) GetPrograms() []*program.Program {
 }
 
 func (bd *Blockdata) Hash() Uint256 {
-
 	d := sig.GetHashData(bd)
 	temp := sha256.Sum256([]byte(d))
 	f := sha256.Sum256(temp[:])
