@@ -27,7 +27,7 @@ const (
 	ST_AssetState     DataEntryPrefix = 0xc6
 	ST_Validator      DataEntryPrefix = 0xc7
 	ST_Record         DataEntryPrefix = 0xc8
-	//SYSTEM
+	//the current block hash
 	SYS_CurrentBlock DataEntryPrefix = 0x40
 	// SYS_CurrentHeader     DataEntryPrefix = 0x41
 	SYS_CurrentBookKeeper DataEntryPrefix = 0x42
