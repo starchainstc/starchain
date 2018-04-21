@@ -6,7 +6,6 @@ import (
 	"starchain/account"
 	"strconv"
 	"starchain/common"
-	"STC/common/password"
 	"encoding/binary"
 	"bytes"
 	"syscall"
@@ -14,6 +13,8 @@ import (
 	"starchain/events/signalset"
 	"github.com/urfave/cli"
 	"starchain/client"
+	"starchain/common/passwd"
+	"STC/common/password"
 )
 
 func walletAction(c *cli.Context) error{
@@ -71,7 +72,7 @@ func walletAction(c *cli.Context) error{
 			os.Exit(1)
 		}
 		fmt.Println("# please input new password #")
-		newPassword, _ := password.GetConfirmedPassword()
+		newPassword, _ := passwd.GetConfirePwd()
 		if ok := wallet.ChangePassword([]byte(pwd), newPassword); !ok {
 			fmt.Fprintln(os.Stderr, "failed to change your wallet password")
 			os.Exit(1)
