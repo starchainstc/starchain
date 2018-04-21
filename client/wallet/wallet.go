@@ -14,7 +14,6 @@ import (
 	"github.com/urfave/cli"
 	"starchain/client"
 	"starchain/common/passwd"
-	"STC/common/password"
 )
 
 func walletAction(c *cli.Context) error{
@@ -171,7 +170,7 @@ func NewCommand() *cli.Command {
 
 
 func getConfirmPwd() []byte{
-	tmp, err := password.GetConfirmedPassword()
+	tmp, err := passwd.GetConfirePwd()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
