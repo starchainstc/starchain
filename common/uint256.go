@@ -6,7 +6,7 @@ import (
 	"errors"
 	"io"
 
-	. "STC/errors"
+	. "starchain/errors"
 )
 
 const UINT256SIZE int = 32
