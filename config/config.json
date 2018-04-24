@@ -3,27 +3,33 @@
     "MagicCode": 5841263,
     "ver":1,
     "VerifyList": [
-      "120.76.147.200:25887",
-      "120.25.99.139:25887",
-      "120.24.204.25:25887",
-      "120.76.169.242:25887"
+      "47.52.44.156:25887",
+      "47.75.44.148:25887",
+      "47.75.45.95:25887",
+      "47.91.218.249:25887",
+      "47.75.4.61:25887",
+      "47.91.208.36:25887",
+      "47.75.44.103:25887"
     ],
     "BookKeepers": [
-      "03033d483cf70e90014528609682b13c614d6aa2324595dab19ffbcca15fb2e9b7",
-      "02a217f87f445bea3fea04540d2e73f702085dbcafa30bc68d3c960e23accbd617",
-      "027095cba4c948eff60554edf598f069bd89e33e42f9bc1afb671b6ee779f0ab74",
-      "03c2e67e24baa2fcb1bf9fe2e92b26963e4f9d2958c9ef2c9f3542a0bfad97f2c1"
+      "02375c72e9ae42b90df8c18ed77306fc60dbc6a95be327e04c793d8397c2372b18",
+      "0269c4016c2b57ca34ab85e6ba94051639fcb58cfb1490c013252a329dad2280a7",
+      "03596675a9e1f00bbd9b8dfc21d04ff5bcc5729e71cf4b215fd7967ea28414994e",
+      "031b68157c7211441ca42549038b5213f3533cb8f97f45d30f887d45aeeda2ea06",
+      "03c4e4fc261d56ce8360ab854e4ca219d4dc7fc3a18d87eff84dc2a48108827e70",
+      "0315b69a1d7249e03641a89cb7f0820e9301b6d19fe16f4b1e5d29cc914c72af71",
+      "02f2e79b69c7757c49974d5941165737a41755baf6a4bedcd5a01dae5976015c69"
     ],
     "RestPort": 25884,
     "JsonPort": 25886,
     "NodePort": 25887,
     "NodeType": "service",
     "LogLevel": "info",
-    "MaxLogSize": 10,
+    "MaxLogSize": 30,
     "Tls": false,
-    "MultiCoreNum": 4,
+    "MultiCoreNum": 7,
     "TransactionFee": {
-      "Transfer": 0.100
+      "Transfer": 0.000
     }
   }
 }
