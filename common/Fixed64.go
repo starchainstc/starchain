@@ -65,15 +65,16 @@ func StringToFixed64(s string) (Fixed64, error) {
 	var buffer bytes.Buffer
 	//TODO: check invalid string
 	di := strings.Index(s, ".")
-	if len(s)-di > 9 {
-		return Fixed64(0), errors.New("unsupported precision")
-	}
 	if di == -1 {
 		buffer.WriteString(s)
 		for i := 0; i < 8; i++ {
 			buffer.WriteByte('0')
 		}
-	} else {
+	} else if len(s)-di > 9 {
+
+		return Fixed64(0), errors.New("unsupported precision")
+	}else{
+
 		buffer.WriteString(s[:di])
 		buffer.WriteString(s[di+1:])
 		n := 8 - (len(s) - di - 1)
