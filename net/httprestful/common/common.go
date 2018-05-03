@@ -12,6 +12,7 @@ import (
 	"starchain/smartcontract/states"
 	tx"starchain/core/transaction"
 	"starchain/errors"
+	"starchain/util"
 )
 
 var node protocol.Noder
@@ -31,7 +32,6 @@ type ApiServer interface {
 func SetNode(n protocol.Noder){
 	node = node
 }
-
 
 func GetConnectionCount(cmd map[string]interface{}) map[string]interface{} {
 	resp := ResponsePack(ErrorCode.SUCCESS)
@@ -527,6 +527,73 @@ func SendRawTransaction(cmd map[string]interface{}) map[string]interface{} {
 	}
 	return resp
 }
+
+/**
+send to address
+ */
+
+func SendToAddress(cmd map[string]interface{}) map[string]interface{}{
+	resp := ResponsePack(ErrorCode.SUCCESS)
+	var asset, address, value string
+	asset = cmd["asset"].(string)
+	address = cmd["to"].(string)
+	value = cmd["value"].(string)
+	if Wallet == nil {
+		resp[ErrorCode.RESP_ERROR] = ErrorCode.INVALID_PARAMS
+		return resp
+	}
+
+	batchOut := util.BatchOut{
+		Address: address,
+		Value:   value,
+	}
+	tmp, err := HexStringToBytesReverse(asset)
+	if err != nil {
+		resp[ErrorCode.RESP_ERROR] = ErrorCode.INVALID_PARAMS
+		return resp
+	}
+	var assetID Uint256
+	if err := assetID.Deserialize(bytes.NewReader(tmp)); err != nil {
+		resp[ErrorCode.RESP_ERROR] = ErrorCode.INVALID_PARAMS
+		return resp
+	}
+	txn, err := util.MakeTransferTransaction(Wallet, assetID, batchOut)
+	if err != nil {
+		resp[ErrorCode.RESP_ERROR] = ErrorCode.INVALID_TRANSACTION
+		return resp
+	}
+
+	if errCode := VerifyAndSendTx(txn); errCode != errors.ErrNoError {
+		resp[ErrorCode.RESP_ERROR] = int32(errCode)
+		return resp
+	}
+	txHash := txn.Hash()
+	resp[ErrorCode.RESP_RESULT] = BytesToHexString(txHash.ToArrayReverse())
+	return resp
+}
+
+
+func GetNewAddress(cmd map[string]interface{}) map[string]interface{} {
+	resp := ResponsePack(ErrorCode.SUCCESS)
+	acc,err :=Wallet.CreateAccount()
+	if err != nil {
+		resp[ErrorCode.RESP_ERROR] = ErrorCode.INTERNAL_ERROR
+		return resp
+	}
+	if err := Wallet.CreateContract(acc); err != nil {
+		Wallet.DeleteAccount(acc.ProgramHash)
+		resp[ErrorCode.RESP_ERROR] = ErrorCode.INTERNAL_ERROR
+		return resp
+	}
+	addr,err := acc.ProgramHash.ToAddress()
+	if err != nil {
+		resp[ErrorCode.RESP_ERROR] = ErrorCode.INTERNAL_ERROR
+		return resp
+	}
+	resp[ErrorCode.RESP_RESULT] = addr
+	return resp
+}
+
 
 //stateupdate
 func GetStateUpdate(cmd map[string]interface{}) map[string]interface{} {
