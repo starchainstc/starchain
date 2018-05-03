@@ -12,6 +12,7 @@ import (
 
 func StartServer(n protocol.Noder){
 	common.SetNode(n)
+	//events.NewEvent().AddListener(events.EventBlockPersistCompleted, SendBlock2NoticeServer)
 	ledger.DefaultLedger.Blockchain.BCEvents.Subscribe(events.EventBlockPersistCompleted, SendBlock2NoticeServer)
 	func() {
 		rest := restful.InitRestServer(common.CheckAccessToken)
