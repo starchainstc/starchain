@@ -60,6 +60,8 @@ const (
 	Api_GetContract         = "/api/v1/contract/:hash"
 	Api_GetRecordByHash     = "/api/v1/custom/record/:hash"
 	Api_GetRecordByFileHash = "/api/v1/custom/file/:hash"
+	Api_SendToAddress 		= "/api/v1/sendtoaddress"
+	Api_GetNewAddress		= "/api/v1/getnewaddress"
 )
 
 func InitRestServer(checkAccessToken func(string, string) (string, errors.ErrCode, interface{})) ApiServer {
@@ -162,6 +164,7 @@ func (rt *restServer) registryMethod() {
 		Api_GetStateUpdate:      {name: "getstateupdate", handler: GetStateUpdate},
 		Api_GetRecordByHash:     {name: "getrecord", handler: GetRecordByHash},
 		Api_GetRecordByFileHash: {name: "getrecordbyfile", handler: GetRecordByFileHash},
+		Api_GetNewAddress:		 {name: "getnewaddress", handler:GetNewAddress},
 	}
 
 	sendRawTransaction := func(cmd map[string]interface{}) map[string]interface{} {
@@ -181,6 +184,7 @@ func (rt *restServer) registryMethod() {
 		Api_NoticeServerUrl:   {name: "setnoticeserverurl", handler: SetNoticeServerUrl},
 		Api_NoticeServerState: {name: "setpostblock", handler: SetPushBlockFlag},
 		Api_WebsocketState:    {name: "setwebsocketstate", handler: rt.setWebsocketState},
+		Api_SendToAddress:		{name:"sendtoaddress",handler:SendToAddress},
 	}
 	rt.postMap = postMethodMap
 	rt.getMap = getMethodMap
@@ -301,6 +305,7 @@ func (rt *restServer) getParams(r *http.Request, url string, req map[string]inte
 	case Api_NoticeServerState:
 	case Api_WebsocketState:
 		break
+	case Api_SendToAddress:
 	default:
 	}
 	return req
