@@ -13,6 +13,7 @@ import (
 	tx"starchain/core/transaction"
 	"starchain/errors"
 	"starchain/util"
+	"encoding/hex"
 )
 
 var node protocol.Noder
@@ -26,6 +27,11 @@ const(
 type ApiServer interface {
 	Start() error
 	Stop()
+}
+
+type balanceRes struct{
+	AssetId string
+	Value string
 }
 
 
@@ -290,13 +296,19 @@ func GetBalanceByAddr(cmd map[string]interface{}) map[string]interface{} {
 		return resp
 	}
 	unspends, err := ledger.DefaultLedger.Store.GetUnspentsFromProgramHash(programHash)
-	var balance Fixed64 = 0
-	for _, u := range unspends {
+	var balances = make(map[Uint256]Fixed64)
+	for assetId, u := range unspends {
+		var balance Fixed64 = 0
 		for _, v := range u {
 			balance = balance + v.Value
 		}
+		balances[assetId] = balance
 	}
-	resp[ErrorCode.RESP_RESULT] = balance.String()
+	var balRes []balanceRes
+	for k,v := range balances{
+		balRes = append(balRes,balanceRes{AssetId:hex.EncodeToString(k.ToArrayReverse()),Value:v.String()})
+	}
+	resp[ErrorCode.RESP_RESULT] = balRes
 	return resp
 }
 
