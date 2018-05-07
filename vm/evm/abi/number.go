@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"math/big"
 	"starchain/vm/evm/common"
-	. "STC/common"
+	. "starchain/common"
 )
 
 var (
