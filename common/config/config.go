@@ -20,6 +20,7 @@ type Configuration struct {
 	SeedList        []string           `json:"VerifyList"`  //list of seed
 	BookKeepers     []string           `json:"BookKeepers"` // The default book keepers' publickey
 	HttpRestPort    int                `json:"RestPort"`
+	HttpRestStart	bool			   `json:"RestStart"`
 	RestCertPath    string             `json:"RestCertPath"` // certification file path
 	RestKeyPath     string             `json:"RestKeyPath"` //certification key file path
 	HttpInfoPort    uint16             `json:"HttpApiPort"` // http api port
