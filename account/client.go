@@ -208,6 +208,7 @@ func (client *ClientImpl) ProcessOneBlock(block *ledger.Block) {
 
 
 func (client *ClientImpl) ProcessSignals() {
+	var log = log.NewLog()
 	clientSignalHandler := func(signal os.Signal, v interface{}) {
 		switch signal {
 		case syscall.SIGINT:
@@ -235,6 +236,7 @@ func (client *ClientImpl) ProcessSignals() {
 }
 
 func NewClient(path string, password []byte, create bool) *ClientImpl {
+	var log = log.NewLog()
 	client := &ClientImpl{
 		path:          path,
 		accounts:      map[Uint160]*Account{},
@@ -343,6 +345,7 @@ func NewClient(path string, password []byte, create bool) *ClientImpl {
 
 
 func (cl *ClientImpl) GetDefaultAccount() (*Account, error) {
+	var log = log.NewLog()
 	acc:=cl.GetAccountByProgramHash(cl.mainAccount)
 	if acc != nil {
 		return acc,nil
@@ -586,6 +589,7 @@ func (cl *ClientImpl) SaveAccount(ac *Account) error {
 
 // LoadAccounts loads all accounts from wallet file to memory
 func (cl *ClientImpl) LoadAccounts() error {
+	var log = log.NewLog()
 	accounts := make(map[Uint160]*Account)
 
 	account, err := cl.LoadAccountData()
@@ -729,6 +733,7 @@ func clientIsDefaultBookKeeper(publicKey string) bool {
 }
 
 func GetClient() Client {
+	var log = log.NewLog()
 	if !FileExisted(WalletFileName) {
 		log.Fatal(fmt.Sprintf("No %s detected, please create a wallet by using command line.", WalletFileName))
 		os.Exit(1)
@@ -746,6 +751,7 @@ func GetClient() Client {
 }
 
 func GetBookKeepers() []*crypto.PubKey {
+	var log = log.NewLog()
 	var pubKeys = []*crypto.PubKey{}
 	sort.Strings(config.Parameters.BookKeepers)
 	for _, key := range config.Parameters.BookKeepers {
