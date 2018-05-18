@@ -1,7 +1,7 @@
 package main
 
 import (
-	"starchain/common/log"
+	stclog"starchain/common/log"
 	"starchain/account"
 	"starchain/crypto"
 	"os"
@@ -15,14 +15,13 @@ import (
 	"starchain/net/httprestful"
 	"starchain/core/ledger"
 	"starchain/net/protocol"
-	//"starchain/net/nodeinfo"
 )
+
+var log = stclog.NewLog()
 
 func main(){
 	var err error
-
 	ledger.DefaultLedger = new(ledger.Ledger)
-
 	ledger.DefaultLedger.Store,err = ChainStore.NewLedgerStore()
 	defer ledger.DefaultLedger.Store.Close()
 	if err != nil {
@@ -59,7 +58,12 @@ func main(){
 	//start rpc server for console
 	go rpchttp.StartRPCServer()
 	//start server for http api
-	go httprestful.StartServer(node)
+	if config.Parameters.HttpRestStart{
+		log.Info("start http restful server")
+		go httprestful.StartServer(node)
+	}else{
+		log.Info("Don't start http restful api server")
+	}
 	//if this is verity node ,start consensus protocol
 	if protocol.VERIFYNODENAME == config.Parameters.NodeType {
 		dbftServices := dbft.NewDbftService(cli, "logcon", node)
@@ -69,11 +73,11 @@ func main(){
 	for {
 		time.Sleep(dbft.GenBlockTime)
 		log.Info("BlockHeight = ", ledger.DefaultLedger.Blockchain.BlockHeight)
-		isNeedNewFile := log.CheckIfNeedNewFile()
-		if isNeedNewFile == true {
-			log.ClosePrintLog()
-			log.Init(log.Path, os.Stdout)
-		}
+		//isNeedNewFile := log.CheckIfNeedNewFile()
+		//if isNeedNewFile == true {
+		//	log.ClosePrintLog()
+		//	log.Init(log.Path, os.Stdout)
+		//}
 	}
 }
 
