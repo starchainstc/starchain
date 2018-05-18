@@ -1,5 +1,5 @@
 package log
-
+/**
 import (
 	"fmt"
 	"os"
@@ -382,4 +382,4 @@ func ClosePrintLog() error {
 	}
 	return err
 }
-
+**/
