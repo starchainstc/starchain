@@ -43,12 +43,10 @@ type ConsensusContext struct {
 
 
 func (cxt *ConsensusContext) M() int {
-	log.Debug()
 	return len(cxt.BookKeepers) - (len(cxt.BookKeepers)-1)/3
 }
 
 func (cxt *ConsensusContext) ChangeView(viewNum byte) {
-	log.Debug()
 	p := (cxt.Height - uint32(viewNum)) % uint32(len(cxt.BookKeepers))
 	cxt.State &= SignatureSent
 	cxt.ViewNumber = viewNum
@@ -66,7 +64,6 @@ func (cxt *ConsensusContext) ChangeView(viewNum byte) {
 }
 
 func (cxt *ConsensusContext) MakeChangeView() *msg.ConsensusPayload {
-	log.Debug()
 	cv := &ChangeView{
 		NewViewNumber: cxt.ExpectedView[cxt.BookKeeperIndex],
 	}
@@ -75,7 +72,6 @@ func (cxt *ConsensusContext) MakeChangeView() *msg.ConsensusPayload {
 }
 
 func (cxt *ConsensusContext) MakeHeader() *ledger.Block {
-	log.Debug()
 	if cxt.Transactions == nil {
 		return nil
 	}
@@ -106,7 +102,6 @@ func (cxt *ConsensusContext) MakeHeader() *ledger.Block {
 }
 
 func (cxt *ConsensusContext) MakePayload(message ConsensusMessage) *msg.ConsensusPayload {
-	log.Debug()
 	message.ConsensusMessageData().ViewNumber = cxt.ViewNumber
 	return &msg.ConsensusPayload{
 		Version:         ContextVersion,
@@ -120,7 +115,6 @@ func (cxt *ConsensusContext) MakePayload(message ConsensusMessage) *msg.Consensu
 }
 
 func (cxt *ConsensusContext) MakePrepareRequest() *msg.ConsensusPayload {
-	log.Debug()
 	preReq := &PrepareRequest{
 		Nonce:          cxt.Nonce,
 		NextBookKeeper: cxt.NextBookKeeper,
@@ -132,7 +126,6 @@ func (cxt *ConsensusContext) MakePrepareRequest() *msg.ConsensusPayload {
 }
 
 func (cxt *ConsensusContext) MakePrepareResponse(signature []byte) *msg.ConsensusPayload {
-	log.Debug()
 	preRes := &PrepareResponse{
 		Signature: signature,
 	}
@@ -141,7 +134,6 @@ func (cxt *ConsensusContext) MakePrepareResponse(signature []byte) *msg.Consensu
 }
 
 func (cxt *ConsensusContext) GetSignaturesCount() (count int) {
-	log.Debug()
 	count = 0
 	for _, sig := range cxt.Signatures {
 		if sig != nil {
@@ -165,7 +157,7 @@ func (cxt *ConsensusContext) GetStateDetail() string {
 }
 
 func (cxt *ConsensusContext) Reset(client cl.Client, localNode net.Neter) {
-	log.Debug()
+	var log = log.NewLog()
 	cxt.State = Initial
 	cxt.PrevHash = ledger.DefaultLedger.Blockchain.CurrentBlockHash()
 	cxt.Height = ledger.DefaultLedger.Blockchain.BlockHeight + 1

@@ -45,6 +45,7 @@ type DbftService struct {
 }
 
 func NewDbftService(client cl.Client, logDictionary string, localNet net.Neter) *DbftService {
+	var log = log.NewLog()
 	log.Debug("init dbft service")
 	ds := &DbftService{
 		Client:        client,
@@ -63,7 +64,7 @@ func NewDbftService(client cl.Client, logDictionary string, localNet net.Neter) 
 }
 
 func (ds *DbftService) BlockPersistCompleted(v interface{}) {
-	log.Debug()
+	var log = log.NewLog()
 	if block, ok := v.(*ledger.Block); ok {
 		log.Infof("persist block: %x", block.Hash())
 		err := ds.localNet.CleanSubmittedTransactions(block)
@@ -81,7 +82,7 @@ func (ds *DbftService) BlockPersistCompleted(v interface{}) {
 }
 
 func (ds *DbftService) CheckExpectedView(viewNumber byte) {
-	log.Debug()
+	var log = log.NewLog()
 	if ds.context.State.HasFlag(BlockGenerated) {
 		return
 	}
@@ -111,9 +112,9 @@ func (ds *DbftService) CheckPolicy(transaction *tx.Transaction) error {
 	return nil
 }
 
-
+//check signature and save block
 func (ds *DbftService) CheckSignatures() error {
-	log.Debug()
+	var log = log.NewLog()
 
 	//check if get enough signatures
 	if ds.context.GetSignaturesCount() >= ds.context.M() {
@@ -169,7 +170,6 @@ func (ds *DbftService) CheckSignatures() error {
 }
 
 func (ds *DbftService) CreateBookkeepingTransaction(txnFeeOutputs []*tx.TxOutput, nonce uint64) *tx.Transaction {
-	log.Debug()
 	//TODO: sysfee
 	bookKeepingPayload := &payload.BookKeeping{
 		Nonce: uint64(time.Now().UnixNano()),
@@ -187,7 +187,7 @@ func (ds *DbftService) CreateBookkeepingTransaction(txnFeeOutputs []*tx.TxOutput
 }
 
 func (ds *DbftService) ChangeViewReceived(payload *msg.ConsensusPayload, message *ChangeView) {
-	log.Debug()
+	var log = log.NewLog()
 	log.Info(fmt.Sprintf("Change View Received: height=%d View=%d index=%d nv=%d", payload.Height, message.ViewNumber(), payload.BookKeeperIndex, message.NewViewNumber))
 
 	if message.NewViewNumber <= ds.context.ExpectedView[payload.BookKeeperIndex] {
@@ -200,15 +200,15 @@ func (ds *DbftService) ChangeViewReceived(payload *msg.ConsensusPayload, message
 }
 
 func (ds *DbftService) Halt() error {
-	log.Debug()
+	var log = log.NewLog()
 	log.Info("DBFT Stop")
 	if ds.timer != nil {
 		ds.timer.Stop()
 	}
 
 	if ds.started {
-		ledger.DefaultLedger.Blockchain.BCEvents.UnSubscribe(events.EventBlockPersistCompleted, ds.blockPersistCompletedSubscriber)
-		ds.localNet.GetEvent("consensus").UnSubscribe(events.EventNewInventory, ds.newInventorySubscriber)
+		//ledger.DefaultLedger.Blockchain.BCEvents.UnSubscribe(events.EventBlockPersistCompleted, ds.blockPersistCompletedSubscriber)
+		//ds.localNet.GetEvent("consensus").UnSubscribe(events.EventNewInventory, ds.newInventorySubscriber)
 	}
 	return nil
 }
@@ -216,6 +216,7 @@ func (ds *DbftService) Halt() error {
 
 
 func (ds *DbftService) InitializeConsensus(viewNum byte) error {
+	var log = log.NewLog()
 	log.Debug("[InitializeConsensus] Start InitializeConsensus.")
 	ds.context.contextMu.Lock()
 	defer ds.context.contextMu.Unlock()
@@ -268,7 +269,6 @@ func (ds *DbftService) InitializeConsensus(viewNum byte) error {
 
 
 func (ds *DbftService) LocalNodeNewInventory(v interface{}) {
-	log.Debug()
 	if inventory, ok := v.(Inventory); ok {
 		if inventory.Type() == CONSENSUS {
 			payload, ret := inventory.(*msg.ConsensusPayload)
@@ -280,7 +280,7 @@ func (ds *DbftService) LocalNodeNewInventory(v interface{}) {
 }
 
 func (ds *DbftService) NewConsensusPayload(payload *msg.ConsensusPayload) {
-	log.Debug()
+	var log = log.NewLog()
 	ds.context.contextMu.Lock()
 	defer ds.context.contextMu.Unlock()
 
@@ -355,8 +355,8 @@ func (ds *DbftService) VerifyTxs(txs []*tx.Transaction) error {
 
 
 func (ds *DbftService) PrepareRequestReceived(payload *msg.ConsensusPayload, message *PrepareRequest) {
-	log.Debug()
-	log.Info(fmt.Sprintf("Prepare Request Received: height=%d View=%d index=%d tx=%d", payload.Height, message.ViewNumber(), payload.BookKeeperIndex, len(message.Transactions)))
+	var log = log.NewLog()
+	log.Infof("Prepare Request Received: height=%d View=%d index=%d tx=%d", payload.Height, message.ViewNumber(), payload.BookKeeperIndex, len(message.Transactions))
 
 	if !ds.context.State.HasFlag(Backup) || ds.context.State.HasFlag(RequestReceived) {
 		return
@@ -441,7 +441,7 @@ func (ds *DbftService) PrepareRequestReceived(payload *msg.ConsensusPayload, mes
 
 
 func (ds *DbftService) PrepareResponseReceived(payload *msg.ConsensusPayload, message *PrepareResponse) {
-	log.Debug()
+	var log = log.NewLog()
 
 	log.Info(fmt.Sprintf("Prepare Response Received: height=%d View=%d index=%d", payload.Height, message.ViewNumber(), payload.BookKeeperIndex))
 
@@ -473,12 +473,11 @@ func (ds *DbftService) PrepareResponseReceived(payload *msg.ConsensusPayload, me
 
 
 func (ds *DbftService) RefreshPolicy() {
-	log.Debug()
 	con.DefaultPolicy.Refresh()
 }
 
 func (ds *DbftService) RequestChangeView() {
-	log.Debug()
+	var log = log.NewLog()
 	// FIXME if there is no save block notifcation, when the timeout call this function it will crash
 	if ds.context.ViewNumber > ds.context.ExpectedView[ds.context.BookKeeperIndex] {
 		ds.context.ExpectedView[ds.context.BookKeeperIndex] = ds.context.ViewNumber + 1
@@ -496,7 +495,7 @@ func (ds *DbftService) RequestChangeView() {
 }
 
 func (ds *DbftService) SignAndRelay(payload *msg.ConsensusPayload) {
-	log.Debug()
+	var log = log.NewLog()
 
 	prohash, err := payload.GetProgramHashes()
 	if err != nil {
@@ -520,7 +519,7 @@ func (ds *DbftService) SignAndRelay(payload *msg.ConsensusPayload) {
 }
 
 func (ds *DbftService) Start() error {
-	log.Debug()
+	var log = log.NewLog()
 	ds.started = true
 
 	if config.Parameters.GenBlockTime > MINGENBLOCKTIME {
@@ -528,7 +527,9 @@ func (ds *DbftService) Start() error {
 	} else {
 		log.Warn("The Generate block time should be longer than 6 seconds, so set it to be 6.")
 	}
-
+	//e := events.NewEvent()
+	//e.AddListener(events.EventBlockPersistCompleted, ds.BlockPersistCompleted)
+	//e.AddListener(events.EventNewInventory, ds.LocalNodeNewInventory)
 	ds.blockPersistCompletedSubscriber = ledger.DefaultLedger.Blockchain.BCEvents.Subscribe(events.EventBlockPersistCompleted, ds.BlockPersistCompleted)
 	ds.newInventorySubscriber = ds.localNet.GetEvent("consensus").Subscribe(events.EventNewInventory, ds.LocalNodeNewInventory)
 
@@ -537,7 +538,7 @@ func (ds *DbftService) Start() error {
 }
 
 func (ds *DbftService) Timeout() {
-	log.Debug()
+	var log = log.NewLog()
 	ds.context.contextMu.Lock()
 	defer ds.context.contextMu.Unlock()
 	if ds.timerHeight != ds.context.Height || ds.timeView != ds.context.ViewNumber {
@@ -609,7 +610,7 @@ func (ds *DbftService) Timeout() {
 }
 
 func (ds *DbftService) timerRoutine() {
-	log.Debug()
+	var log = log.NewLog()
 	for {
 		select {
 		case <-ds.timer.C:

@@ -3,7 +3,6 @@ package dbft
 import (
 	"starchain/common"
 	"io"
-	"starchain/common/log"
 	tx"starchain/core/transaction"
 	ser"starchain/common/serialization"
 	."starchain/errors"
@@ -19,7 +18,6 @@ type PrepareRequest struct {
 
 
 func (pr *PrepareRequest) Serialize(w io.Writer) error {
-	log.Debug()
 
 	pr.msgData.Serialize(w)
 	if err := ser.WriteVarUint(w, pr.Nonce); err != nil {
@@ -43,7 +41,6 @@ func (pr *PrepareRequest) Serialize(w io.Writer) error {
 }
 
 func (pr *PrepareRequest) Deserialize(r io.Reader) error {
-	log.Debug()
 	pr.msgData = ConsensusMessageData{}
 	pr.msgData.Deserialize(r)
 	pr.Nonce, _ = ser.ReadVarUint(r, 0)
@@ -76,16 +73,13 @@ func (pr *PrepareRequest) Deserialize(r io.Reader) error {
 }
 
 func (pr *PrepareRequest) Type() ConsensusMessageType {
-	log.Debug()
 	return pr.ConsensusMessageData().Type
 }
 
 func (pr *PrepareRequest) ViewNumber() byte {
-	log.Debug()
 	return pr.msgData.ViewNumber
 }
 
 func (pr *PrepareRequest) ConsensusMessageData() *ConsensusMessageData {
-	log.Debug()
 	return &(pr.msgData)
 }
