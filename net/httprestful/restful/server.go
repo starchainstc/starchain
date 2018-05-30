@@ -79,8 +79,8 @@ func InitRestServer(checkAccessToken func(string, string) (string, errors.ErrCod
 
 func (rt *restServer) Start() error {
 	var log = log.NewLog()
-	if Parameters.HttpRestPort == 0 {
-		log.Fatal("Not configure HttpRestPort port ")
+	if Parameters.SecretKey == "" {
+		log.Fatal("Not configure HttpRestPort secret key ")
 		return nil
 	}
 
