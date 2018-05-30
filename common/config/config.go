@@ -36,6 +36,8 @@ type Configuration struct {
 	IsTLS           bool               `json:"Tls"`
 	AppKey        string             	`json:"appKey"`
 	SecretKey         string             `json:"secretKey"`
+	CertPath		string				`json:"certPath"`
+	KeyPath			string				`json:"keyPath"`
 	CAPath          string             `json:"CAPath"`
 	GenBlockTime    uint               `json:"GenBlockTime"`
 	MultiCoreNum    uint               `json:"MultiCoreNum"`
