@@ -26,6 +26,7 @@ type block struct {
 
 
 func (msg block) Handle(node Noder) error {
+	var log = log.NewLog()
 	//log.Info("RX block message")
 	hash := msg.blk.Hash()
 	isSync := false
@@ -56,6 +57,7 @@ func (msg block) Handle(node Noder) error {
 }
 
 func (msg dataReq) Handle(node Noder) error {
+	var log = log.NewLog()
 	log.Debug()
 	reqtype := common.InventoryType(msg.dataType)
 	hash := msg.hash
@@ -91,6 +93,7 @@ func (msg dataReq) Handle(node Noder) error {
 }
 
 func NewBlockFromHash(hash common.Uint256) (*ledger.Block, error) {
+	var log = log.NewLog()
 	bk, err := ledger.DefaultLedger.Store.GetBlock(hash)
 	if err != nil {
 		log.Errorf("Get Block error: %s, block hash: %x", err.Error(), hash)
@@ -100,6 +103,7 @@ func NewBlockFromHash(hash common.Uint256) (*ledger.Block, error) {
 }
 
 func NewBlock(bk *ledger.Block) ([]byte, error) {
+	var log = log.NewLog()
 	log.Debug()
 	var msg block
 	msg.blk = *bk
@@ -132,6 +136,7 @@ func NewBlock(bk *ledger.Block) ([]byte, error) {
 }
 
 func ReqBlkData(node Noder, hash common.Uint256) error {
+	var log = log.NewLog()
 	var msg dataReq
 	msg.dataType = common.BLOCK
 	msg.hash = hash
@@ -181,6 +186,7 @@ func (msg block) Serialization() ([]byte, error) {
 }
 
 func (msg *block) Deserialization(p []byte) error {
+	var log = log.NewLog()
 	buf := bytes.NewBuffer(p)
 
 	err := binary.Read(buf, binary.LittleEndian, &(msg.msgHdr))

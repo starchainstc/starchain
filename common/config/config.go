@@ -34,8 +34,8 @@ type Configuration struct {
 	WebSocketPort   int                `json:"WebSocketPort"`
 	PrintLevel      string             `json:"LogLevel"`
 	IsTLS           bool               `json:"Tls"`
-	CertPath        string             `json:"CertPath"`
-	KeyPath         string             `json:"KeyPath"`
+	AppKey        string             	`json:"appKey"`
+	SecretKey         string             `json:"secretKey"`
 	CAPath          string             `json:"CAPath"`
 	GenBlockTime    uint               `json:"GenBlockTime"`
 	MultiCoreNum    uint               `json:"MultiCoreNum"`

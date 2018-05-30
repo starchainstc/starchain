@@ -62,7 +62,7 @@ func opAppCall(e *ExecutionEngine) (VMState, error) {
 
 func opSysCall(e *ExecutionEngine) (VMState, error) {
 	s := e.context.OpReader.ReadVarString()
-
+	var log = log.NewLog()
 	log.Trace("[opSysCall] service name:", s)
 
 	success, err := e.service.Invoke(s, e)

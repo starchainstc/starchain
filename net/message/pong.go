@@ -16,6 +16,7 @@ type pong struct {
 }
 
 func NewPongMsg() ([]byte, error) {
+	var log = log.NewLog()
 	var msg pong
 	msg.msgHdr.Magic = protocol.NETMAGIC
 	copy(msg.msgHdr.CMD[0:7], "pong")

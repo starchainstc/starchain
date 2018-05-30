@@ -35,6 +35,7 @@ func (this *TXNPool) init() {
 }
 
 func (this *TXNPool) AppendTxnPool(txn *transaction.Transaction, poolVerify bool) ErrCode {
+	var log = log.NewLog()
 	//verify transaction with Concurrency
 	if errCode := va.VerifyTransaction(txn); errCode != ErrNoError {
 		log.Error("Transaction verification failed", txn.Hash())
@@ -96,6 +97,7 @@ func (this *TXNPool) GetTransaction(hash common.Uint256) *transaction.Transactio
 }
 
 func (this *TXNPool) verifyTransactionWithTxnPool(txn *transaction.Transaction) ErrCode {
+	var log = log.NewLog()
 	// check if the transaction includes double spent UTXO inputs
 	if err := this.apendToUTXOPool(txn); err != nil {
 		log.Info(err)
@@ -131,6 +133,7 @@ func (this *TXNPool) checkDuplicateLockAsset(txn *transaction.Transaction) error
 
 
 func (this *TXNPool) removeTransaction(txn *transaction.Transaction) {
+	var log = log.NewLog()
 	//1.remove from txnList
 	this.deltxnList(txn)
 	//2.remove from UTXO list map
@@ -240,6 +243,7 @@ func (this *TXNPool) summaryAssetIssueAmount(txn *transaction.Transaction) bool 
 
 
 func (this *TXNPool) cleanTransactionList(txns []*transaction.Transaction) error {
+	var log = log.NewLog()
 	cleaned := 0
 	txnsNum := len(txns)
 	for _, txn := range txns {

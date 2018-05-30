@@ -23,6 +23,7 @@ type SignableData interface {
 }
 
 func SignBySigner(data SignableData, signer Signer) ([]byte, error) {
+	var log = log.NewLog()
 	log.Debug()
 	//fmt.Println("data",data)
 	rtx, err := Sign(data, signer.PrivKey())

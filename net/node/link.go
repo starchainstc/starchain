@@ -31,6 +31,7 @@ type link struct {
 }
 
 func unpackNodeBuf(node *node,buf []byte){
+	var log = log.NewLog()
 	var msgLen int
 	var msgBuf []byte
 	if len(buf) == 0 {
@@ -38,6 +39,7 @@ func unpackNodeBuf(node *node,buf []byte){
 	}
 	if node.rxBuf.len == 0{
 		length := protocol.MSGHDRLEN -len(node.rxBuf.p)
+		//
 		if length > len(buf){
 			length = len(buf)
 			node.rxBuf.p = append(node.rxBuf.p,buf[0:length]...)
@@ -76,6 +78,7 @@ func unpackNodeBuf(node *node,buf []byte){
 
 
 func printIPAddr() {
+	var log = log.NewLog()
 	host, _ := os.Hostname()
 	addrs, _ := net.LookupIP(host)
 	for _, addr := range addrs {
@@ -90,6 +93,7 @@ func (link *link) CloseConn() {
 }
 
 func (n *node) initConnection() {
+	var log = log.NewLog()
 	isTls := Parameters.IsTLS
 	var listener net.Listener
 	var err error
@@ -126,7 +130,7 @@ func (n *node) initConnection() {
 }
 
 func initNonTlsListen() (net.Listener, error) {
-	log.Debug()
+	var log = log.NewLog()
 	listener, err := net.Listen("tcp", ":"+strconv.Itoa(Parameters.NodePort))
 	if err != nil {
 		log.Error("Error listening\n", err.Error())
@@ -136,6 +140,7 @@ func initNonTlsListen() (net.Listener, error) {
 }
 
 func initTlsListen() (net.Listener, error) {
+	var log = log.NewLog()
 	CertPath := Parameters.CertPath
 	KeyPath := Parameters.KeyPath
 	CAPath := Parameters.CAPath
@@ -175,6 +180,7 @@ func initTlsListen() (net.Listener, error) {
 }
 
 func parseIPaddr(s string) (string, error) {
+	var log = log.NewLog()
 	i := strings.Index(s, ":")
 	if i < 0 {
 		log.Warn("Split IP address&port error")
@@ -184,8 +190,7 @@ func parseIPaddr(s string) (string, error) {
 }
 
 func (node *node) Connect(nodeAddr string) error {
-	log.Debug()
-
+	var log = log.NewLog()
 	if node.IsAddrInNbrList(nodeAddr) == true {
 		return nil
 	}
@@ -231,7 +236,6 @@ func (node *node) Connect(nodeAddr string) error {
 }
 
 func NonTLSDial(nodeAddr string) (net.Conn, error) {
-	log.Debug()
 	conn, err := net.DialTimeout("tcp", nodeAddr, time.Second*protocol.DIALTIMEOUT)
 	if err != nil {
 		return nil, err

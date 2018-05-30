@@ -150,6 +150,7 @@ func (b *Block) Hash() Uint256 {
 }
 
 func (b *Block) Verify() error {
+	var log = log.NewLog()
 	log.Info("This function is expired.please use Validation/blockValidator to Verify Block.")
 	return nil
 }

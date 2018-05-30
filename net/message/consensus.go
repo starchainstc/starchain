@@ -54,6 +54,7 @@ func (cp *ConsensusPayload) InvertoryType() common.InventoryType {
 
 
 func (cp *ConsensusPayload) GetProgramHashes() ([]common.Uint160, error) {
+	var log = log.NewLog()
 	log.Debug()
 
 	if ledger.DefaultLedger == nil {
@@ -82,6 +83,7 @@ func (cp *ConsensusPayload) GetProgramHashes() ([]common.Uint160, error) {
 }
 
 func (cp *ConsensusPayload) SetPrograms(programs []*program.Program) {
+	var log = log.NewLog()
 	if programs == nil {
 		log.Warn("Set programs with NULL parameters")
 		return
@@ -107,7 +109,6 @@ func (cp *ConsensusPayload) GetMessage() []byte {
 }
 
 func (msg consensus) Handle(node Noder) error {
-	log.Debug()
 	cp := &msg.cons
 	if !node.LocalNode().ExistedID(cp.Hash()) {
 		//events.NewEvent().Notify(events.EventNewInventory, cp)
@@ -151,6 +152,7 @@ func (cp *ConsensusPayload) SerializeUnsigned(w io.Writer) error {
 }
 
 func (cp *ConsensusPayload) Serialize(w io.Writer) error {
+	var log = log.NewLog()
 	err := cp.SerializeUnsigned(w)
 	if cp.Program == nil {
 		log.Error("Program is NULL")
@@ -172,6 +174,7 @@ func (msg *consensus) Serialization() ([]byte, error) {
 }
 
 func (cp *ConsensusPayload) DeserializeUnsigned(r io.Reader) error {
+	var log = log.NewLog()
 	var err error
 	cp.Version, err = serialization.ReadUint32(r)
 	if err != nil {
@@ -222,6 +225,7 @@ func (cp *ConsensusPayload) DeserializeUnsigned(r io.Reader) error {
 }
 
 func (cp *ConsensusPayload) Deserialize(r io.Reader) error {
+	var log = log.NewLog()
 	err := cp.DeserializeUnsigned(r)
 
 	pg := new(program.Program)
@@ -235,7 +239,6 @@ func (cp *ConsensusPayload) Deserialize(r io.Reader) error {
 }
 
 func (msg *consensus) Deserialization(p []byte) error {
-	log.Debug()
 	buf := bytes.NewBuffer(p)
 	err := binary.Read(buf, binary.LittleEndian, &(msg.msgHdr))
 	err = msg.cons.Deserialize(buf)
@@ -243,7 +246,7 @@ func (msg *consensus) Deserialization(p []byte) error {
 }
 
 func NewConsensus(cp *ConsensusPayload) ([]byte, error) {
-	log.Debug()
+	var log = log.NewLog()
 	var msg consensus
 	msg.msgHdr.Magic = NETMAGIC
 	cmd := "consensus"

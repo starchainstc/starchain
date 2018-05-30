@@ -25,6 +25,7 @@ type ContractContext struct {
 }
 
 func NewContractContext(data sig.SignableData) *ContractContext {
+	var log = log.NewLog()
 	log.Debug()
 	programHashes, _ := data.GetProgramHashes() //TODO: check error
 	log.Debug("programHashes= ", programHashes)
@@ -41,6 +42,7 @@ func NewContractContext(data sig.SignableData) *ContractContext {
 }
 
 func (cxt *ContractContext) Add(contract *Contract, index int, parameter []byte) error {
+	var log = log.NewLog()
 	log.Debug()
 	i := cxt.GetIndex(contract.ProgramHash)
 	if i < 0 {
@@ -58,6 +60,7 @@ func (cxt *ContractContext) Add(contract *Contract, index int, parameter []byte)
 }
 
 func (cxt *ContractContext) AddContract(contract *Contract, pubkey *crypto.PubKey, parameter []byte) error {
+	var log = log.NewLog()
 	log.Debug()
 	if contract.GetType() == MultiSigContract {
 		if err := cxt.Add(contract, cxt.tempParaIndex, parameter); err != nil {
@@ -193,6 +196,7 @@ func (cxt *ContractContext) GetIndex(programHash Uint160) int {
 }
 
 func (cxt *ContractContext) GetPrograms() []*pg.Program {
+	var log = log.NewLog()
 	log.Debug()
 	//log.Debug("!cxt.IsCompleted()=",!cxt.IsCompleted())
 	//log.Debug(cxt.Codes)

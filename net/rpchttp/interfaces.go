@@ -112,6 +112,7 @@ func TransArryByteToHexString(ptx *tx.Transaction) *Transactions {
 	return trans
 }
 func getCurrentDirectory() string {
+	var log = log.NewLog()
 	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
 		log.Fatal(err)
@@ -402,15 +403,15 @@ func setDebugInfo(params []interface{}) map[string]interface{} {
 	if len(params) < 1 {
 		return STCRpcInvalidParameter
 	}
-	switch params[0].(type) {
-	case float64:
-		level := params[0].(float64)
-		if err := log.Log.SetDebugLevel(int(level)); err != nil {
-			return STCRpcInvalidParameter
-		}
-	default:
-		return STCRpcInvalidParameter
-	}
+	//switch params[0].(type) {
+	//case float64:
+	//	level := params[0].(float64)
+	//	if err := log.Log.SetDebugLevel(int(level)); err != nil {
+	//		return STCRpcInvalidParameter
+	//	}
+	//default:
+	//	return STCRpcInvalidParameter
+	//}
 	return STCRpcSuccess
 }
 

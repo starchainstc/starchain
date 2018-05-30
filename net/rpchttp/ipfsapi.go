@@ -64,7 +64,7 @@ func (r *httpResponseReader) checkError() error {
 }
 
 func AddFileIPFS(filepath string, useCluster bool) (string, error) {
-
+	var log = log.NewLog()
 	resp, err := requestIPFS("POST", "add", filepath)
 	if err != nil {
 		log.Error(err.Error())
@@ -91,6 +91,7 @@ func AddFileIPFS(filepath string, useCluster bool) (string, error) {
 }
 
 func GetFileIPFS(ref, outPath string) error {
+	var log = log.NewLog()
 	putpatharg := fmt.Sprintf("output=%s", outPath)
 	resp, err := requestIPFS("GET", "get", ref, putpatharg)
 	if err != nil {
@@ -133,6 +134,7 @@ func formatIPFSResponse(r *http.Response) (string, error) {
 
 }
 func requestIPFS(method, cmd, path string, args ...string) (*http.Response, error) {
+	var log = log.NewLog()
 	ctx, cancel := context.WithTimeout(context.Background(),
 		time.Duration(defaultTimeout)*time.Second)
 	defer cancel()

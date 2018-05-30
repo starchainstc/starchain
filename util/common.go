@@ -150,7 +150,7 @@ func getTransferTxnPerOutputFee(outputNum int) (Fixed64, error) {
 		}
 	}
 
-	return txnFee / Fixed64(outputNum), nil
+	return txnFee * Fixed64(outputNum), nil
 }
 
 func MakeTransferTransaction(wallet account.Client, assetID Uint256, batchOut ...BatchOut) (*transaction.Transaction, error) {

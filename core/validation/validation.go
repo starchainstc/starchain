@@ -12,6 +12,7 @@ import (
 )
 
 func VerifySignableData(signableData sig.SignableData)(bool,error){
+	var log = log.NewLog()
 	hashes,err := signableData.GetProgramHashes()
 	if err != nil {
 		log.Tracef("cat't get programhash")

@@ -40,6 +40,7 @@ func GenesisBlock(defBookKeeper []*crypto.PubKey) (*Blockchain,error){
 }
 
 func (bc *Blockchain) AddBlock(block *Block) error {
+	var log = log.NewLog()
 	log.Debug()
 	bc.mutex.Lock()
 	defer bc.mutex.Unlock()
@@ -61,6 +62,7 @@ func (bc *Blockchain) GetHeader(hash Uint256) (*Header, error) {
 }
 
 func (bc *Blockchain) SaveBlock(block *Block) error {
+	var log = log.NewLog()
 	log.Debugf("Save block, block hash %x", block.Hash())
 	err := DefaultLedger.Store.SaveBlock(block, DefaultLedger)
 	if err != nil {

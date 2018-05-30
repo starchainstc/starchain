@@ -84,6 +84,7 @@ func (node *node) SyncBlk() {
 }
 
 func (node *node) SendPingToNbr() {
+	var log = log.NewLog()
 	noders := node.local.GetNeighborNoder()
 	for _, n := range noders {
 		if n.GetState() == ESTABLISH {
@@ -99,6 +100,7 @@ func (node *node) SendPingToNbr() {
 
 
 func (node *node) HeartBeatMonitor() {
+	var log = log.NewLog()
 	noders := node.local.GetNeighborNoder()
 	for _, n := range noders {
 		if n.GetState() == ESTABLISH {
@@ -160,6 +162,7 @@ func getNodeAddr(n *node) NodeAddr {
 
 
 func (node *node) reconnect() {
+	var log = log.NewLog()
 	node.RetryConnAddrs.Lock()
 	defer node.RetryConnAddrs.Unlock()
 	lst := make(map[string]int)

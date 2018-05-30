@@ -28,6 +28,7 @@ type blkHeader struct {
 }
 
 func NewHeadersReq() ([]byte, error) {
+	var log = log.NewLog()
 	var h headersReq
 
 	h.p.len = 1
@@ -122,6 +123,7 @@ func (msg blkHeader) Serialization() ([]byte, error) {
 }
 
 func (msg *blkHeader) Deserialization(p []byte) error {
+	var log = log.NewLog()
 	buf := bytes.NewBuffer(p)
 	err := binary.Read(buf, binary.LittleEndian, &(msg.hdr))
 	if err != nil {
@@ -148,6 +150,7 @@ func (msg *blkHeader) Deserialization(p []byte) error {
 }
 
 func (msg headersReq) Handle(node protocol.Noder) error {
+	var log = log.NewLog()
 	log.Debug()
 	// lock
 	var startHash [protocol.HASHLEN]byte
@@ -168,6 +171,7 @@ func (msg headersReq) Handle(node protocol.Noder) error {
 }
 
 func SendMsgSyncHeaders(node protocol.Noder) {
+	var log = log.NewLog()
 	buf, err := NewHeadersReq()
 	if err != nil {
 		log.Error("failed build a new headersReq")
@@ -177,6 +181,7 @@ func SendMsgSyncHeaders(node protocol.Noder) {
 }
 
 func (msg blkHeader) Handle(node protocol.Noder) error {
+	var log = log.NewLog()
 	log.Debug()
 	err := ledger.DefaultLedger.Store.AddHeaders(msg.blkHdr, ledger.DefaultLedger)
 	if err != nil {
@@ -187,6 +192,7 @@ func (msg blkHeader) Handle(node protocol.Noder) error {
 }
 
 func GetHeadersFromHash(startHash common.Uint256, stopHash common.Uint256) ([]ledger.Header, uint32, error) {
+	var log = log.NewLog()
 	var count uint32 = 0
 	var empty [protocol.HASHLEN]byte
 	headers := []ledger.Header{}
@@ -259,6 +265,7 @@ func GetHeadersFromHash(startHash common.Uint256, stopHash common.Uint256) ([]le
 }
 
 func NewHeaders(headers []ledger.Header, count uint32) ([]byte, error) {
+	var log = log.NewLog()
 	var msg blkHeader
 	msg.cnt = count
 	msg.blkHdr = headers

@@ -16,7 +16,7 @@ import (
 )
 
 func VerifyTransaction(txn *tx.Transaction) ErrCode {
-
+	var log = log.NewLog()
 	if err := CheckDuplicateInput(txn); err != nil {
 		log.Warn("[VerifyTransaction],", err)
 		return ErrDuplicateInput
@@ -172,7 +172,7 @@ func CheckLockedAsset(txn *tx.Transaction, ledger *ledger.Ledger) error {
 }
 
 func VerifyTransactionWithLedger(txn *tx.Transaction, ledger *ledger.Ledger) ErrCode {
-
+	var log = log.NewLog()
 	if exist := ledger.Store.IsTxHashDuplicate(txn.Hash()); exist {
 		log.Info("[VerifyTransactionWithLedger] duplicated transaction detected.")
 		return ErrTxHashDuplicate
@@ -199,7 +199,7 @@ func CheckDuplicateInput(tx *tx.Transaction) error {
 	for i, utxoin := range tx.UTXOInputs {
 		for j := 0; j < i; j++ {
 			if utxoin.ReferTxID == tx.UTXOInputs[j].ReferTxID && utxoin.ReferTxOutputIndex == tx.UTXOInputs[j].ReferTxOutputIndex {
-				return errors.New("invalid transaction")
+				return errors.New("duplication input transaction")
 			}
 		}
 	}
@@ -307,6 +307,7 @@ func checkAmountPrecise(amount Fixed64, precision byte) bool {
 }
 
 func checkIssuerInBookkeeperList(issuer *crypto.PubKey, bookKeepers []*crypto.PubKey) bool {
+	var log = log.NewLog()
 	for _, bk := range bookKeepers {
 		r := crypto.Equal(issuer, bk)
 		if r == true {

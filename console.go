@@ -8,6 +8,8 @@ import (
 	"starchain/client/wallet"
 	"starchain/client/bookeeper"
 	"starchain/client/consensus"
+	"starchain/client/info"
+	"starchain/client/smartcontract"
 )
 
 func main(){
@@ -29,6 +31,8 @@ func main(){
 		*wallet.NewCommand(),
 		*bookeeper.NewCommond(),
 		*consensus.NewCommond(),
+		*info.NewCommand(),
+		*smartcontract.NewCommand(),
 	}
 	app.Run(os.Args)
 }

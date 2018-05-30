@@ -17,6 +17,8 @@ import (
 	"context"
 	"starchain/net/websocket"
 	"starchain/errors"
+	"crypto"
+	"encoding/hex"
 )
 
 type handler func(map[string]interface{}) map[string]interface{}
@@ -76,6 +78,7 @@ func InitRestServer(checkAccessToken func(string, string) (string, errors.ErrCod
 }
 
 func (rt *restServer) Start() error {
+	var log = log.NewLog()
 	if Parameters.HttpRestPort == 0 {
 		log.Fatal("Not configure HttpRestPort port ")
 		return nil
@@ -318,23 +321,26 @@ func (rt *restServer) initGetHandler() {
 			var req = make(map[string]interface{})
 			var resp map[string]interface{}
 			access_token := r.FormValue("access_token")
-			auth_type := r.FormValue("auth_type")
-
-			CAkey, errCode, result := rt.checkAccessToken(auth_type, access_token)
-			url := rt.getPath(r.URL.Path)
-			if errCode > 0 && r.URL.Path != Api_OauthServerUrl {
-				resp = ResponsePack(errCode)
-				resp["Result"] = result
-				rt.response(w, resp)
-				return
-			}
-			if h, ok := rt.getMap[url]; ok {
-				req["CAkey"] = CAkey
-				req = rt.getParams(r, url, req)
-				resp = h.handler(req)
-				resp["Action"] = h.name
-			} else {
-				resp = ResponsePack(Err.INVALID_METHOD)
+			//auth_type := r.FormValue("auth_type")
+			if !rt.authCheck(access_token){
+				resp = ResponsePack(Err.INVALID_TOKEN)
+			}else{
+				//CAkey, errCode, result := rt.checkAccessToken(auth_type, access_token)
+				url := rt.getPath(r.URL.Path)
+				//if errCode > 0 && r.URL.Path != Api_OauthServerUrl {
+				//	resp = ResponsePack(errCode)
+				//	resp["Result"] = result
+				//	rt.response(w, resp)
+				//	return
+				//}
+				if h, ok := rt.getMap[url]; ok {
+					//req["CAkey"] = CAkey
+					req = rt.getParams(r, url, req)
+					resp = h.handler(req)
+					resp["Action"] = h.name
+				} else {
+					resp = ResponsePack(Err.INVALID_METHOD)
+				}
 			}
 			rt.response(w, resp)
 		})
@@ -350,28 +356,31 @@ func (rt *restServer) initPostHandler() {
 			var req = make(map[string]interface{})
 			var resp map[string]interface{}
 			access_token := r.FormValue("access_token")
-			auth_type := r.FormValue("auth_type")
-
-			CAkey, errCode, result := rt.checkAccessToken(auth_type, access_token)
-			url := rt.getPath(r.URL.Path)
-			if errCode > 0 && r.URL.Path != Api_OauthServerUrl {
-				resp = ResponsePack(errCode)
-				resp["Result"] = result
-				rt.response(w, resp)
-				return
-			}
-			if h, ok := rt.postMap[url]; ok {
-				if err := json.Unmarshal(body, &req); err == nil {
-					req["CAkey"] = CAkey
-					req = rt.getParams(r, url, req)
-					resp = h.handler(req)
-					resp["Action"] = h.name
+			//auth_type := r.FormValue("auth_type")
+			if !rt.authCheck(access_token){
+				resp = ResponsePack(Err.INVALID_TOKEN)
+			}else{
+				//CAkey, errCode, result := rt.checkAccessToken(auth_type, access_token)
+				url := rt.getPath(r.URL.Path)
+				//if errCode > 0 && r.URL.Path != Api_OauthServerUrl {
+				//	resp = ResponsePack(errCode)
+				//	resp["Result"] = result
+				//	rt.response(w, resp)
+				//	return
+				//}
+				if h, ok := rt.postMap[url]; ok {
+					if err := json.Unmarshal(body, &req); err == nil {
+						//req["CAkey"] = CAkey
+						req = rt.getParams(r, url, req)
+						resp = h.handler(req)
+						resp["Action"] = h.name
+					} else {
+						resp = ResponsePack(Err.ILLEGAL_DATAFORMAT)
+						resp["Action"] = h.name
+					}
 				} else {
-					resp = ResponsePack(Err.ILLEGAL_DATAFORMAT)
-					resp["Action"] = h.name
+					resp = ResponsePack(Err.INVALID_METHOD)
 				}
-			} else {
-				resp = ResponsePack(Err.INVALID_METHOD)
 			}
 			rt.response(w, resp)
 		})
@@ -391,6 +400,7 @@ func (rt *restServer) write(w http.ResponseWriter, data []byte) {
 	w.Write(data)
 }
 func (rt *restServer) response(w http.ResponseWriter, resp map[string]interface{}) {
+	var log = log.NewLog()
 	resp["Desc"] = Err.ErrMap[resp["Error"].(errors.ErrCode)]
 	data, err := json.Marshal(resp)
 	if err != nil {
@@ -399,7 +409,20 @@ func (rt *restServer) response(w http.ResponseWriter, resp map[string]interface{
 	}
 	rt.write(w, data)
 }
+
+func (rt *restServer) authCheck(secretkey string) bool{
+	authCoder := Parameters.AppKey+Parameters.SecretKey
+	md := crypto.MD5.New()
+	md.Write([]byte(authCoder))
+	encode := md.Sum(nil)
+	if hex.EncodeToString(encode) == secretkey{
+		return true
+	}
+	return false
+}
+
 func (rt *restServer) Stop() {
+	var log = log.NewLog()
 	if rt.server != nil {
 		rt.server.Shutdown(context.Background())
 		log.Error("Close restful ")
@@ -417,7 +440,7 @@ func (rt *restServer) Restart(cmd map[string]interface{}) map[string]interface{}
 	return resp
 }
 func (rt *restServer) initTlsListen() (net.Listener, error) {
-
+	var log = log.NewLog()
 	CertPath := Parameters.RestCertPath
 	KeyPath := Parameters.RestKeyPath
 

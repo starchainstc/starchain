@@ -66,6 +66,7 @@ type ConnectingNodes struct {
 }
 
 func (node *node) DumpInfo() {
+	var log = log.NewLog()
 	log.Info("Node info:")
 	log.Info("\t state = ", node.state)
 	log.Info(fmt.Sprintf("\t id = 0x%x", node.id))
@@ -149,6 +150,7 @@ func NewNode() *node {
 
 
 func InitNode(pubKey *crypto.PubKey) Noder {
+	var log = log.NewLog()
 	n := NewNode()
 	n.version = PROTOCOLVERSION
 	switch Parameters.NodeType {
@@ -183,6 +185,7 @@ func InitNode(pubKey *crypto.PubKey) Noder {
 	n.idCache.init()
 	n.cachedHashes = make([]Uint256, 0)
 	n.nodeDisconnectSubscriber = n.eventQueue.GetEvent("disconnect").Subscribe(events.EventNodeDisconnect, n.NodeDisconnect)
+	//events.NewEvent().AddListener(events.EventNodeDisconnect,n.NodeDisconnect)
 	go n.initConnection()
 	go n.updateConnection()
 	go n.updateNodeInfo()
@@ -200,6 +203,7 @@ func (n *node) NodeDisconnect(v interface{}) {
 
 //read from node
 func (node *node) rx() {
+	var log = log.NewLog()
 	conn := node.getConn()
 	buf := make([]byte, MAXBUFLEN)
 	for {
@@ -220,11 +224,13 @@ func (node *node) rx() {
 	}
 
 	DISCONNECT:
-	node.local.eventQueue.GetEvent("disconnect").Notify(events.EventNodeDisconnect, node)
+		events.NewEvent().Notify(events.EventNodeDisconnect, node)
+	//node.local.eventQueue.GetEvent("disconnect").Notify(events.EventNodeDisconnect, node)
 }
 
 //send to node
 func (node *node) Tx(buf []byte) {
+	var log = log.NewLog()
 	log.Debugf("TX buf length: %d\n%x", len(buf), buf)
 
 	if node.GetState() == INACTIVITY {
@@ -241,6 +247,7 @@ func (node *node) Tx(buf []byte) {
 
 
 func rmNode(node *node) {
+	var log = log.NewLog()
 	log.Debug(fmt.Sprintf("Remove unused/deuplicate node: 0x%0x", node.id))
 }
 
@@ -345,7 +352,7 @@ func (node *node) UpdateRXTime(t time.Time) {
 }
 
 func (node *node) Xmit(message interface{}) error {
-	log.Debug()
+	var log = log.NewLog()
 	var buffer []byte
 	var err error
 	switch message.(type) {
@@ -401,6 +408,7 @@ func (node *node) GetAddr() string {
 }
 
 func (node *node) GetAddr16() ([16]byte, error) {
+	var log = log.NewLog()
 	var result [16]byte
 	ip := net.ParseIP(node.addr).To16()
 	if ip == nil {
@@ -453,6 +461,7 @@ func (node *node) SyncNodeHeight() {
 }
 
 func (node *node) WaitForSyncBlkFinish() {
+	var log = log.NewLog()
 	for {
 		headerHeight := ledger.DefaultLedger.Store.GetHeaderHeight()
 		currentBlkHeight := ledger.DefaultLedger.Blockchain.BlockHeight
@@ -464,6 +473,7 @@ func (node *node) WaitForSyncBlkFinish() {
 	}
 }
 func (node *node) WaitForFourPeersStart() {
+	var log = log.NewLog()
 	for {
 		log.Debug("WaitForFourPeersStart...")
 		cnt := node.local.GetNbrNodeCnt()
@@ -506,6 +516,7 @@ func (node *node) RemoveFlightHeightLessThan(h uint32) {
 }
 
 func (node *node) RemoveFlightHeight(height uint32) {
+	var log = log.NewLog()
 	node.flightlock.Lock()
 	defer node.flightlock.Unlock()
 	log.Debug("height is ", height)
@@ -523,6 +534,7 @@ func (node *node) GetLastRXTime() time.Time {
 }
 
 func (node *node) AddInRetryList(addr string) {
+	var log = log.NewLog()
 	node.RetryConnAddrs.Lock()
 	defer node.RetryConnAddrs.Unlock()
 	if node.RetryAddrs == nil {
@@ -538,6 +550,7 @@ func (node *node) AddInRetryList(addr string) {
 }
 
 func (node *node) RemoveFromRetryList(addr string) {
+	var log = log.NewLog()
 	node.RetryConnAddrs.Lock()
 	defer node.RetryConnAddrs.Unlock()
 	if len(node.RetryAddrs) > 0 {
@@ -550,7 +563,7 @@ func (node *node) RemoveFromRetryList(addr string) {
 }
 
 func (node *node) Relay(frmnode Noder, message interface{}) error {
-	log.Debug()
+	var log = log.NewLog()
 	var buffer []byte
 	var err error
 	isHash := false

@@ -9,6 +9,7 @@ import (
 )
 
 
+
 type ECDsaCrypto struct  {
 }
 
@@ -22,7 +23,7 @@ func (c * ECDsaCrypto) Hash256( message []byte ) []byte {
 }
 
 func (c * ECDsaCrypto) VerifySignature(message []byte,signature []byte, pubkey []byte) (bool,error) {
-
+	var log = log.NewLog()
 	log.Debug("message: %x \n", message)
 	log.Debug("signature: %x \n", signature)
 	log.Debug("pubkey: %x \n", pubkey)

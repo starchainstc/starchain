@@ -27,6 +27,7 @@ const (
 )
 
 func newGetAddr() ([]byte, error) {
+	var log = log.NewLog()
 	var msg addrReq
 	// Fixme the check is the []byte{0} instead of 0
 	var sum []byte
@@ -45,6 +46,7 @@ func newGetAddr() ([]byte, error) {
 }
 
 func NewAddrs(nodeaddrs []NodeAddr, count uint64) ([]byte, error) {
+	var log = log.NewLog()
 	var msg addr
 	msg.nodeAddrs = nodeaddrs
 	msg.nodeCnt = count
@@ -87,6 +89,7 @@ func (msg addrReq) Verify(buf []byte) error {
 }
 
 func (msg addrReq) Handle(node Noder) error {
+	var log = log.NewLog()
 	log.Debug()
 	// lock
 	var addrstr []NodeAddr
@@ -138,6 +141,7 @@ func (msg addr) Serialization() ([]byte, error) {
 }
 
 func (msg *addr) Deserialization(p []byte) error {
+	var log = log.NewLog()
 	buf := bytes.NewBuffer(p)
 	err := binary.Read(buf, binary.LittleEndian, &(msg.hdr))
 	err = binary.Read(buf, binary.LittleEndian, &(msg.nodeCnt))
@@ -160,6 +164,7 @@ func (msg addr) Verify(buf []byte) error {
 }
 
 func (msg addr) Handle(node Noder) error {
+	var log = log.NewLog()
 	log.Debug()
 	for _, v := range msg.nodeAddrs {
 		var ip net.IP

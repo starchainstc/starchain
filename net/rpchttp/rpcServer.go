@@ -12,6 +12,7 @@ const (
 )
 
 func StartRPCServer() {
+	var log = log.NewLog()
 	http.HandleFunc("/",Handle)
 	HandleFunc("/getbestblockhash",getBestBlockHash)
 	HandleFunc("getblock", getBlock)

@@ -49,6 +49,7 @@ func InitWsServer(checkAccessToken func(string, string) (string, ErrCode, interf
 }
 
 func (ws *WsServer) Start() error {
+	var log = log.NewLog()
 	if Parameters.HttpWsPort == 0 {
 		log.Error("Not configure HttpWsPort port ")
 		return nil
@@ -151,6 +152,7 @@ func (ws *WsServer) registryMethod() {
 }
 
 func (ws *WsServer) Stop() {
+	var log = log.NewLog()
 	if ws.server != nil {
 		ws.server.Shutdown(context.Background())
 		log.Error("Close websocket ")
@@ -192,6 +194,7 @@ func (ws *WsServer) checkSessionsTimeout(done chan bool) {
 
 //webSocketHandler
 func (ws *WsServer) webSocketHandler(w http.ResponseWriter, r *http.Request) {
+	var log = log.NewLog()
 	wsConn, err := ws.Upgrader.Upgrade(w, r, nil)
 
 	if err != nil {
@@ -241,7 +244,7 @@ func (ws *WsServer) IsValidMsg(reqMsg map[string]interface{}) bool {
 	return true
 }
 func (ws *WsServer) OnDataHandle(curSession *session.Session, bysMsg []byte, r *http.Request) bool {
-
+	var log = log.NewLog()
 	var req = make(map[string]interface{})
 
 	if err := json.Unmarshal(bysMsg, &req); err != nil {
@@ -318,6 +321,7 @@ func (ws *WsServer) deleteTxHashs(sSessionId string) {
 	}
 }
 func (ws *WsServer) response(sSessionId string, resp map[string]interface{}) {
+	var log = log.NewLog()
 	resp["Desc"] = ErrorCode.ErrMap[resp["Error"].(ErrCode)]
 	data, err := json.Marshal(resp)
 	if err != nil {
@@ -337,6 +341,7 @@ func (ws *WsServer) PushTxResult(txHashStr string, resp map[string]interface{}) 
 	ws.PushResult(resp)
 }
 func (ws *WsServer) PushResult(resp map[string]interface{}) {
+	var log = log.NewLog()
 	resp["Desc"] = ErrorCode.ErrMap[resp["Error"].(ErrCode)]
 	data, err := json.Marshal(resp)
 	if err != nil {
@@ -360,7 +365,7 @@ func (ws *WsServer) broadcast(data []byte) error {
 }
 
 func (ws *WsServer) initTlsListen() (net.Listener, error) {
-
+	var log = log.NewLog()
 	CertPath := Parameters.RestCertPath
 	KeyPath := Parameters.RestKeyPath
 

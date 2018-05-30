@@ -29,6 +29,7 @@ type trn struct {
 
 
 func (msg trn) Handle(node protocol.Noder) error {
+	var log = log.NewLog()
 	log.Debug("RX Transaction message")
 	tx := &msg.txn
 	if !node.LocalNode().ExistedID(tx.Hash()) {
@@ -73,6 +74,7 @@ func (msg dataReq) Serialization() ([]byte, error) {
 }
 
 func (msg *dataReq) Deserialization(p []byte) error {
+	var log = log.NewLog()
 	buf := bytes.NewBuffer(p)
 	err := binary.Read(buf, binary.LittleEndian, &(msg.msgHdr))
 	if err != nil {
@@ -96,6 +98,7 @@ func (msg *dataReq) Deserialization(p []byte) error {
 
 
 func NewTxnFromHash(hash common.Uint256) (*transaction.Transaction, error) {
+	var log = log.NewLog()
 	txn, err := ledger.DefaultLedger.GetTransactionWithHash(hash)
 	if err != nil {
 		log.Error("Get transaction with hash error: ", err.Error())
@@ -106,7 +109,7 @@ func NewTxnFromHash(hash common.Uint256) (*transaction.Transaction, error) {
 }
 
 func NewTxn(txn *transaction.Transaction) ([]byte, error) {
-	log.Debug()
+	var log = log.NewLog()
 	var msg trn
 
 	msg.msgHdr.Magic = protocol.NETMAGIC

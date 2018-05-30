@@ -113,6 +113,7 @@ func (self *ChainStore) Close() {
 }
 
 func (self *ChainStore) loop() {
+	var log = log.NewLog()
 	for {
 		select {
 		case t := <-self.taskCh:
@@ -157,7 +158,7 @@ func (self *ChainStore) clearCache() {
 }
 
 func (bd *ChainStore) InitLedgerStoreWithGenesisBlock(genesisBlock *Block, defaultBookKeeper []*crypto.PubKey) (uint32, error) {
-
+	var log = log.NewLog()
 	hash := genesisBlock.Hash()
 	bd.headerIndex[0] = hash
 
@@ -382,6 +383,7 @@ func (bd *ChainStore) GetCurrentBlockHash() Uint256 {
 }
 
 func (bd *ChainStore) GetContract(codeHash Uint160) ([]byte, error) {
+	var log = log.NewLog()
 	prefix := []byte{byte(ST_Contract)}
 	bData, err_get := bd.st.Get(append(prefix, codeHash.ToArray()...))
 	if err_get != nil {
@@ -405,6 +407,7 @@ func (bd *ChainStore) getHeaderWithCache(hash Uint256) *Header {
 }
 
 func (bd *ChainStore) verifyHeader(header *Header) bool {
+	var log = log.NewLog()
 	prevHeader := bd.getHeaderWithCache(header.Blockdata.PrevBlockHash)
 
 	if prevHeader == nil {
@@ -447,6 +450,7 @@ func (self *ChainStore) AddHeaders(headers []Header, ledger *Ledger) error {
 }
 
 func (bd *ChainStore) GetHeader(hash Uint256) (*Header, error) {
+	var log = log.NewLog()
 	bd.mu.RLock()
 	if header, ok := bd.headerCache[hash]; ok {
 		bd.mu.RUnlock()
@@ -487,6 +491,7 @@ func (bd *ChainStore) GetHeader(hash Uint256) (*Header, error) {
 }
 
 func (bd *ChainStore) SaveAsset(assetId Uint256, asset *Asset) error {
+	var log = log.NewLog()
 	w := bytes.NewBuffer(nil)
 
 	asset.Serialize(w)
@@ -542,6 +547,7 @@ func (bd *ChainStore) GetAssetState(assetId Uint256) (*states.AssetState, error)
 }
 
 func (bd *ChainStore) GetAsset(hash Uint256) (*Asset, error) {
+	var log = log.NewLog()
 	log.Debug(fmt.Sprintf("GetAsset Hash: %x\n", hash))
 
 	asset := new(Asset)
@@ -562,6 +568,7 @@ func (bd *ChainStore) GetAsset(hash Uint256) (*Asset, error) {
 }
 
 func (bd *ChainStore) GetTransaction(hash Uint256) (*tx.Transaction, error) {
+	var log = log.NewLog()
 	log.Debugf("GetTransaction Hash: %x\n", hash)
 
 	t := new(tx.Transaction)
@@ -573,7 +580,9 @@ func (bd *ChainStore) GetTransaction(hash Uint256) (*tx.Transaction, error) {
 
 	return t, nil
 }
-
+/**
+get transaction from db and save to input prarm
+ */
 func (bd *ChainStore) getTx(tx *tx.Transaction, hash Uint256) error {
 	prefix := []byte{byte(DATA_Transaction)}
 	tHash, err_get := bd.st.Get(append(prefix, hash.ToArray()...))
@@ -597,6 +606,7 @@ func (bd *ChainStore) getTx(tx *tx.Transaction, hash Uint256) error {
 }
 
 func (bd *ChainStore) SaveTransaction(tx *tx.Transaction, height uint32) error {
+	var log = log.NewLog()
 	//////////////////////////////////////////////////////////////
 	// generate key with DATA_Transaction prefix
 	txhash := bytes.NewBuffer(nil)
@@ -703,9 +713,9 @@ func (bd *ChainStore) GetBlock(hash Uint256) (*Block, error) {
 
 func (self *ChainStore) GetBookKeeperList() ([]*crypto.PubKey, []*crypto.PubKey, error) {
 	prefix := []byte{byte(SYS_CurrentBookKeeper)}
-	bkListValue, err_get := self.st.Get(prefix)
-	if err_get != nil {
-		return nil, nil, err_get
+	bkListValue, err := self.st.Get(prefix)
+	if err != nil {
+		return nil, nil, err
 	}
 
 	r := bytes.NewReader(bkListValue)
@@ -747,6 +757,7 @@ func (self *ChainStore) GetBookKeeperList() ([]*crypto.PubKey, []*crypto.PubKey,
 }
 
 func (bd *ChainStore) persist(b *Block) error {
+	var log = log.NewLog()
 	utxoUnspents := make(map[Uint160]map[Uint256][]*tx.UTXOUnspent)
 	unspents := make(map[Uint256][]uint16)
 	quantities := make(map[Uint256]Fixed64)
@@ -1282,7 +1293,7 @@ func (bd *ChainStore) persist(b *Block) error {
 
 // can only be invoked by backend write goroutine
 func (bd *ChainStore) addHeader(header *Header) {
-
+	var log = log.NewLog()
 	log.Debugf("addHeader(), Height=%d\n", header.Blockdata.Height)
 
 	hash := header.Blockdata.Hash()
@@ -1309,6 +1320,7 @@ func (self *ChainStore) handlePersistHeaderTask(header *Header) {
 }
 
 func (self *ChainStore) SaveBlock(b *Block, ledger *Ledger) error {
+	var log = log.NewLog()
 	log.Debug("SaveBlock()")
 	self.mu.RLock()
 	headerHeight := uint32(len(self.headerIndex))
@@ -1344,6 +1356,7 @@ func (self *ChainStore) SaveBlock(b *Block, ledger *Ledger) error {
 }
 
 func (self *ChainStore) handlePersistBlockTask(b *Block, ledger *Ledger) {
+	var log = log.NewLog()
 	if b.Blockdata.Height <= self.currentBlockHeight {
 		return
 	}
@@ -1391,6 +1404,7 @@ func (self *ChainStore) handlePersistBlockTask(b *Block, ledger *Ledger) {
 }
 
 func (bd *ChainStore) persistBlocks(ledger *Ledger) {
+	var log = log.NewLog()
 	stopHeight := uint32(len(bd.headerIndex))
 	for h := bd.currentBlockHeight + 1; h <= stopHeight; h++ {
 		hash := bd.headerIndex[h]
@@ -1425,6 +1439,7 @@ func (bd *ChainStore) BlockInCache(hash Uint256) bool {
 }
 
 func (bd *ChainStore) GetQuantityIssued(assetId Uint256) (Fixed64, error) {
+	var log = log.NewLog()
 	log.Debug(fmt.Sprintf("GetQuantityIssued Hash: %x\n", assetId))
 
 	prefix := []byte{byte(ST_QuantityIssued)}
@@ -1700,6 +1715,7 @@ func (bd *ChainStore) GetUnspentsFromProgramHash(programHash Uint160) (map[Uint2
 }
 
 func (bd *ChainStore) GetAssets() map[Uint256]*Asset {
+	var log = log.NewLog()
 	assets := make(map[Uint256]*Asset)
 
 	iter := bd.st.NewIterator([]byte{byte(ST_Info)})

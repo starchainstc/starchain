@@ -78,6 +78,7 @@ func (fc *FunctionCode) GetReturnType() ContractParameterType {
 // method of ICode
 // Get the hash of the smart contract
 func (fc *FunctionCode) CodeHash() Uint160 {
+	var log = log.NewLog()
 	u160 := Uint160{}
 	if fc.codeHash == u160 {
 		u160, err := ToCodeHash(fc.Code)

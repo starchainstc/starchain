@@ -40,6 +40,7 @@ type version struct {
 
 
 func NewVersion(node protocol.Noder)([]byte,error){
+	var log = log.NewLog()
 	var msg version
 	msg.P.Version = node.Version()
 	msg.P.Services = node.Services()
@@ -90,6 +91,7 @@ func (msg version)Verify(buf []byte) error{
 }
 
 func (msg version)Handle(node protocol.Noder) error{
+	var log = log.NewLog()
 	localNode := node.LocalNode()
 	if msg.P.Nonce == localNode.GetID(){
 		log.Warn("the node handshark with itself")
@@ -150,6 +152,7 @@ func (msg version) Serialization() ([]byte, error) {
 }
 
 func (msg *version) Deserialization(p []byte) error {
+	var log = log.NewLog()
 	buf := bytes.NewBuffer(p)
 
 	err := binary.Read(buf, binary.LittleEndian, &(msg.Hdr))

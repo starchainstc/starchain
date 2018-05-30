@@ -36,6 +36,7 @@ type Inv struct {
 
 
 func NewBlocksReq(n protocol.Noder) ([]byte, error) {
+	var log = log.NewLog()
 	var h blocksReq
 	log.Debug("request block hash")
 	// Fixme correct with the exactly request length
@@ -68,7 +69,7 @@ func (msg blocksReq) Verify(buf []byte) error {
 }
 
 func (msg blocksReq) Handle(node protocol.Noder) error {
-	log.Debug()
+	var log = log.NewLog()
 	log.Debug("handle blocks request")
 	var starthash Uint256
 	var stophash Uint256
@@ -112,7 +113,7 @@ func (msg Inv) Verify(buf []byte) error {
 }
 
 func (msg Inv) Handle(node protocol.Noder) error {
-	log.Debug()
+	var log = log.NewLog()
 	var id Uint256
 	str := hex.EncodeToString(msg.P.Blk)
 	log.Debug(fmt.Sprintf("The inv type: 0x%x block len: %d, %s\n",
@@ -196,6 +197,7 @@ func (msg Inv) invType() InventoryType {
 }
 
 func GetInvFromBlockHash(starthash Uint256, stophash Uint256) (*InvPayload, error) {
+	var log = log.NewLog()
 	var count uint32 = 0
 	var i uint32
 	var empty Uint256
@@ -266,6 +268,7 @@ func NewInvPayload(invType InventoryType, count uint32, msg []byte) *InvPayload 
 }
 
 func NewInv(inv *InvPayload) ([]byte, error) {
+	var log = log.NewLog()
 	var msg Inv
 
 	msg.P.Blk = inv.Blk

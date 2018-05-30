@@ -161,6 +161,7 @@ func SetDefaultFunc(def func(http.ResponseWriter, *http.Request)) {
 //this is the funciton that should be called in order to answer an rpc call
 //should be registered like "http.HandleFunc("/", httpjsonrpc.Handle)"
 func Handle(w http.ResponseWriter, r *http.Request) {
+	var log = log.NewLog()
 	mainMux.RLock()
 	defer mainMux.RUnlock()
 	//JSON RPC commands should be POSTs
@@ -269,6 +270,7 @@ func Call(address string, method string, id interface{}, params []interface{}) (
 }
 
 func VerifyAndSendTx(txn *tx.Transaction) ErrCode {
+	var log = log.NewLog()
 	// if transaction is verified unsucessfully then will not put it into transaction pool
 	if errCode := node.AppendTxnPool(txn, true); errCode != ErrNoError {
 		log.Warn("Can NOT add the transaction to TxnPool")

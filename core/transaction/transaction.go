@@ -151,6 +151,7 @@ func (tx *Transaction) SerializeUnsigned(w io.Writer) error {
 
 //deserialize the Transaction
 func (tx *Transaction) Deserialize(r io.Reader) error {
+	var log = log.NewLog()
 	// tx deserialize
 	err := tx.DeserializeUnsigned(r)
 	if err != nil {
@@ -177,6 +178,7 @@ func (tx *Transaction) Deserialize(r io.Reader) error {
 }
 
 func (tx *Transaction) DeserializeUnsigned(r io.Reader) error {
+	var log = log.NewLog()
 	var txType [1]byte
 	_, err := io.ReadFull(r, txType[:])
 	if err != nil {
@@ -188,6 +190,7 @@ func (tx *Transaction) DeserializeUnsigned(r io.Reader) error {
 }
 
 func (tx *Transaction) DeserializeUnsignedWithoutType(r io.Reader) error {
+	var log = log.NewLog()
 	var payloadVersion [1]byte
 	_, err := io.ReadFull(r, payloadVersion[:])
 	tx.PayloadVersion = payloadVersion[0]
@@ -525,6 +528,7 @@ func (tx *Transaction) GetMergedAssetIDValueFromOutputs() TransactionResult {
 
 
 func ParseMultisigTransactionCode(code []byte) []common.Uint160{
+	var log = log.NewLog()
 	if len(code) < MinMultisigCodeLen{
 		log.Error("code not enough in multisig transaction detected")
 		return nil

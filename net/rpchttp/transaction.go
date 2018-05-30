@@ -26,6 +26,7 @@ func NewRegTx(rand string, index int, admin, issuer *Account) *transaction.Trans
 }
 
 func SignTx(admin *Account, tx *transaction.Transaction) {
+	var log = log.NewLog()
 	signdate, err := signature.SignBySigner(tx, admin)
 	if err != nil {
 		log.Error(err, "signdate SignBySigner failed")

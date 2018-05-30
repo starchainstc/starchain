@@ -16,6 +16,7 @@ type ping struct {
 }
 
 func NewPingMsg() ([]byte,error){
+	var log = log.NewLog()
 	var msg ping
 	msg.msgHdr.Magic = protocol.NETMAGIC
 	copy(msg.msgHdr.CMD[:7],"ping")
@@ -50,6 +51,7 @@ func (msg ping) Verify(buf []byte) error {
 }
 
 func (msg ping) Handle(node protocol.Noder) error {
+	var log = log.NewLog()
 	node.SetHeight(msg.height)
 	buf, err := NewPongMsg()
 	if err != nil {

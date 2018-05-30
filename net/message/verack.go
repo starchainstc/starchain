@@ -15,6 +15,7 @@ type verACK struct {
 
 
 func NewVerack() ([]byte, error) {
+	var log = log.NewLog()
 	var msg verACK
 	// Fixme the check is the []byte{0} instead of 0
 	var sum []byte
@@ -33,8 +34,7 @@ func NewVerack() ([]byte, error) {
 }
 
 func (msg verACK) Handle(node Noder) error {
-	log.Debug()
-
+	var log = log.NewLog()
 	s := node.GetState()
 	if s != HANDSHAKE && s != HANDSHAKED {
 		log.Warn("Unknow status to received verack")

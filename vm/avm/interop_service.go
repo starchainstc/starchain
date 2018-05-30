@@ -45,6 +45,7 @@ func (i *InteropService) GetServiceMap() map[string]func(*ExecutionEngine) (bool
 }
 
 func (i *InteropService) Invoke(methoSTCme string, engine *ExecutionEngine) (bool, error) {
+	var log = log.NewLog()
 	if v, ok := i.serviceMap[methoSTCme]; ok {
 		log.Trace("Invoke MethoSTCme:", methoSTCme)
 		return v(engine)

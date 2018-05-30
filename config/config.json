@@ -21,13 +21,13 @@
       "02f2e79b69c7757c49974d5941165737a41755baf6a4bedcd5a01dae5976015c69"
     ],
     "RestPort": 25884,
+    "RestStart":true,
     "JsonPort": 25886,
     "NodePort": 25887,
     "NodeType": "service",
-    "LogLevel": "info",
-    "MaxLogSize": 30,
     "Tls": false,
     "MultiCoreNum": 7,
+    "LogLevel":"info",
     "TransactionFee": {
       "Transfer": 0.000
     }

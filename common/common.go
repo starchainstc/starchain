@@ -14,6 +14,7 @@ import (
 	"os"
 )
 
+
 func ToCodeHash(code []byte) (Uint160, error) {
 	temp := sha256.Sum256(code)
 	md := ripemd160.New()
@@ -28,7 +29,7 @@ func ToCodeHash(code []byte) (Uint160, error) {
 }
 
 func GetNonce() uint64 {
-	log.Debug()
+	log.NewLog().Debug()
 	// Fixme replace with the real random number generator
 	nonce := uint64(rand.Uint32())<<32 + uint64(rand.Uint32())
 	return nonce

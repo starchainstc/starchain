@@ -46,6 +46,7 @@ type filterload struct {
 }
 
 func AllocMsg(t string, length int) Messager {
+	var log = log.NewLog()
 	switch t {
 	case "msgheader":
 		return &msgHdr{}
@@ -174,6 +175,7 @@ func NewMsg(t string, n Noder) ([]byte, error) {
 }
 
 func HandleNodeMsg(node Noder, buf []byte, len int) error {
+	var log = log.NewLog()
 	if len < MSGHDRLEN {
 		log.Warn("Unexpected size of received message")
 		return errors.New("Unexpected size of received message")
@@ -260,6 +262,7 @@ func (hdr *msgHdr) init(cmd string, checksum []byte, length uint32) {
 // Verify the message header information
 // @p payload of the message
 func (hdr msgHdr) Verify(buf []byte) error {
+	var log = log.NewLog()
 	if magicVerify(hdr.Magic) == false {
 		log.Warn(fmt.Sprintf("Unmatched magic number 0x%0x", hdr.Magic))
 		return errors.New("Unmatched magic number")
@@ -302,7 +305,6 @@ func (hdr msgHdr) Serialization() ([]byte, error) {
 }
 
 func (hdr msgHdr) Handle(n Noder) error {
-	log.Debug()
 	// TBD
 	return nil
 }

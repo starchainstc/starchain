@@ -23,6 +23,7 @@ var (
 
 func StartServer(n protocol.Noder) {
 	common.SetNode(n)
+	//events.NewEvent().AddListener(events.EventBlockPersistCompleted, SendBlock2WSclient)
 	ledger.DefaultLedger.Blockchain.BCEvents.Subscribe(events.EventBlockPersistCompleted, SendBlock2WSclient)
 	go func() {
 		ws = websocket.InitWsServer(common.CheckAccessToken)

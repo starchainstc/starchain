@@ -16,6 +16,7 @@ type notFound struct {
 }
 
 func NewNotFound(hash common.Uint256) ([]byte, error) {
+	var log = log.NewLog()
 	var msg notFound
 	msg.hash = hash
 	msg.msgHdr.Magic = protocol.NETMAGIC
@@ -65,6 +66,7 @@ func (msg notFound) Serialization() ([]byte, error) {
 }
 
 func (msg *notFound) Deserialization(p []byte) error {
+	var log = log.NewLog()
 	buf := bytes.NewBuffer(p)
 
 	err := binary.Read(buf, binary.LittleEndian, &(msg.msgHdr))
@@ -83,6 +85,7 @@ func (msg *notFound) Deserialization(p []byte) error {
 }
 
 func (msg notFound) Handle(node protocol.Noder) error {
+	var log = log.NewLog()
 	log.Debug("RX notfound message, hash is ", msg.hash)
 	return nil
 }
