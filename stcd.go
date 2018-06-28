@@ -58,12 +58,7 @@ func main(){
 	//start rpc server for console
 	go rpchttp.StartRPCServer()
 	//start server for http api
-	if config.Parameters.HttpRestStart{
-		log.Info("start http restful server")
-		go httprestful.StartServer(node)
-	}else{
-		log.Info("Don't start http restful api server")
-	}
+	go httprestful.StartServer(node)
 	//if this is verity node ,start consensus protocol
 	if protocol.VERIFYNODENAME == config.Parameters.NodeType {
 		dbftServices := dbft.NewDbftService(cli, "logcon", node)
