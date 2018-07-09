@@ -27,6 +27,9 @@
     "NodeType": "service",
     "Tls": false,
     "MultiCoreNum": 7,
+    "allowIp":"127.0.0.1",
+    "appKey":"appkey",
+    "secretKey":"123456",
     "LogLevel":"info",
     "TransactionFee": {
       "Transfer": 0.000
