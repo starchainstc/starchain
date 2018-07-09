@@ -39,6 +39,8 @@ func init(){
 	}
 	logfile,err := os.OpenFile(logPath+logName,os.O_APPEND|os.O_CREATE,os.ModePerm)
 	if err != nil{
+		//slog.Println(err)
+		//return
 		slog.Fatal(err)
 	}
 	writes = append(writes,logfile)
