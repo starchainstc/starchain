@@ -80,7 +80,7 @@ func InitRestServer(checkAccessToken func(string, string) (string, errors.ErrCod
 func (rt *restServer) Start() error {
 	var log = log.NewLog()
 	if Parameters.SecretKey == "" {
-		log.Fatal("Not configure HttpRestPort secret key ")
+		log.Error("Not configure HttpRestPort secret key ")
 		return nil
 	}
 
@@ -322,7 +322,7 @@ func (rt *restServer) initGetHandler() {
 			var resp map[string]interface{}
 			access_token := r.FormValue("access_token")
 			//auth_type := r.FormValue("auth_type")
-			if !rt.authCheck(access_token){
+			if !rt.authCheck(r,access_token){
 				resp = ResponsePack(Err.INVALID_TOKEN)
 			}else{
 				//CAkey, errCode, result := rt.checkAccessToken(auth_type, access_token)
@@ -357,7 +357,7 @@ func (rt *restServer) initPostHandler() {
 			var resp map[string]interface{}
 			access_token := r.FormValue("access_token")
 			//auth_type := r.FormValue("auth_type")
-			if !rt.authCheck(access_token){
+			if !rt.authCheck(r,access_token){
 				resp = ResponsePack(Err.INVALID_TOKEN)
 			}else{
 				//CAkey, errCode, result := rt.checkAccessToken(auth_type, access_token)
@@ -410,7 +410,15 @@ func (rt *restServer) response(w http.ResponseWriter, resp map[string]interface{
 	rt.write(w, data)
 }
 
-func (rt *restServer) authCheck(secretkey string) bool{
+func (rt *restServer) authCheck(req *http.Request,secretkey string) bool{
+	allowip := Parameters.AllowIp
+	if allowip != "" && allowip != "0.0.0.0" && !strings.Contains(allowip,"0.0.0.0"){
+		remoteIp := req.RemoteAddr
+		if !strings.Contains(allowip,remoteIp){
+			log.NewLog().Error("IP IS NOT AUTHOR")
+			return false
+		}
+	}
 	authCoder := Parameters.AppKey+Parameters.SecretKey
 	md := crypto.MD5.New()
 	md.Write([]byte(authCoder))

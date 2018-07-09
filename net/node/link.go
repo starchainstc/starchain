@@ -24,8 +24,8 @@ type link struct {
 	httpInfoPort 	uint16
 	time		time.Time
 	rxBuf 		struct{
-		p 	[]byte
-		len 	int
+		p 	[]byte //msg remind data
+		len 	int //msg lost length
 			     }
 	connCnt 	uint64
 }
@@ -37,16 +37,19 @@ func unpackNodeBuf(node *node,buf []byte){
 	if len(buf) == 0 {
 		return
 	}
+	//a total msg be parsed
 	if node.rxBuf.len == 0{
 		length := protocol.MSGHDRLEN -len(node.rxBuf.p)
-		//
+		//data not enough for msg header
 		if length > len(buf){
 			length = len(buf)
 			node.rxBuf.p = append(node.rxBuf.p,buf[0:length]...)
 			return
 		}
+		//fill the msg header
 		node.rxBuf.p = append(node.rxBuf.p,buf[0:length]...)
 		if msg.ValidMsgHdr(node.rxBuf.p) == false{
+			//the invaild msg
 			node.rxBuf.p = nil
 			node.rxBuf.len = 0
 			log.Warn("got error message header")
@@ -55,7 +58,7 @@ func unpackNodeBuf(node *node,buf []byte){
 		node.rxBuf.len = msg.PayloadLen(node.rxBuf.p)
 		buf = buf[length:]
 	}
-
+	//
 	msgLen = node.rxBuf.len
 	if len(buf) == msgLen{
 		msgBuf = append(node.rxBuf.p,buf[:]...)

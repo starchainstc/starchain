@@ -141,7 +141,7 @@ func (msg Inv) Handle(node protocol.Noder) error {
 				node.CacheHash(id) //cached hash would not relayed
 				if !node.LocalNode().ExistedID(id) {
 					// send the block request
-					log.Infof("inv request block hash: %x", id)
+					//log.Infof("inv request block hash: %x", id)
 					ReqBlkData(node, id)
 				}
 

@@ -47,6 +47,7 @@ type filterload struct {
 
 func AllocMsg(t string, length int) Messager {
 	var log = log.NewLog()
+	//log.Info("get msg:"+t)
 	switch t {
 	case "msgheader":
 		return &msgHdr{}
@@ -198,7 +199,10 @@ func HandleNodeMsg(node Noder, buf []byte, len int) error {
 	// Todo attach a node pointer to each message
 	// Todo drop the message when verify/deseria packet error
 	msg.Deserialization(buf[:len])
-	msg.Verify(buf[MSGHDRLEN:len])
+	err = msg.Verify(buf[MSGHDRLEN:len])
+	if err != nil {
+		log.Error("msg is not invalid")
+	}
 
 	return msg.Handle(node)
 }
@@ -278,10 +282,6 @@ func (hdr msgHdr) Verify(buf []byte) error {
 
 	return nil
 }
-
-
-
-
 
 
 

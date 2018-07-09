@@ -11,6 +11,7 @@ import (
 	"io"
 	"math/big"
 	"strings"
+	"crypto/md5"
 )
 
 const (
@@ -168,6 +169,12 @@ func Sha256(value []byte) []byte {
 	digest := sha256.Sum256(value)
 	copy(data, digest[0:32])
 	return data
+}
+
+func Md5(str string) []byte{
+	md := md5.New()
+	md.Write([]byte(str))
+	return md.Sum(nil)
 }
 
 func Equal(e1 *PubKey, e2 *PubKey) bool {

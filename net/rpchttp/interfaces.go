@@ -13,7 +13,6 @@ import (
 	"starchain/account"
 	. "starchain/common"
 	"starchain/common/config"
-	"starchain/common/log"
 	"starchain/core/ledger"
 	"starchain/core/signature"
 	tx "starchain/core/transaction"
@@ -21,6 +20,7 @@ import (
 	"starchain/util"
 
 	"github.com/mitchellh/go-homedir"
+	log2 "starchain/common/log"
 )
 
 const (
@@ -112,7 +112,7 @@ func TransArryByteToHexString(ptx *tx.Transaction) *Transactions {
 	return trans
 }
 func getCurrentDirectory() string {
-	var log = log.NewLog()
+	var log = log2.NewLog()
 	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
 		log.Fatal(err)

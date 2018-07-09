@@ -5,6 +5,7 @@ import:
   - ripemd160
   - ssh/terminal
 - package: github.com/golang/groupcache/lru
+- package: github.com/golang/snappy
 - package: github.com/tecbot/gorocksdb
 - package: github.com/syndtr/goleveldb
   subpackages:
@@ -20,6 +21,7 @@ import:
 - package: github.com/gorilla/websocket
 - package: github.com/pborman/uuid
 - package: github.com/mitchellh/go-homedir
-- package: github.com/golang/snappy
+
+
 ignore:
   - golang.org/x/sys/unix

@@ -38,6 +38,7 @@ type Configuration struct {
 	SecretKey         string             `json:"secretKey"`
 	CertPath		string				`json:"certPath"`
 	KeyPath			string				`json:"keyPath"`
+	AllowIp			string 				`json:"allowIp"`
 	CAPath          string             `json:"CAPath"`
 	GenBlockTime    uint               `json:"GenBlockTime"`
 	MultiCoreNum    uint               `json:"MultiCoreNum"`

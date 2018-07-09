@@ -12,14 +12,22 @@ type Subscriber chan interface{}
 type Event struct {
 	m           sync.RWMutex
 	subscribers map[EventType]map[Subscriber]EventFunc
+	//listeners	map[EventType]EventFunc
 }
 
+var event *Event
+var initial bool
 
 func NewEvent() *Event {
 	return &Event{
 		subscribers: make(map[EventType]map[Subscriber]EventFunc),
 	}
 }
+
+//func (e *Event) AddListener(eventType EventType,eventFunc EventFunc){
+//
+//	e.listeners[eventType] = eventFunc
+//}
 
 
 func (e *Event) Subscribe(eventType EventType,eventFunc EventFunc) Subscriber{
