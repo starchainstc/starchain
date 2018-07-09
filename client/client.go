@@ -3,7 +3,6 @@ package client
 import (
 	"time"
 	"starchain/crypto"
-	"starchain/common/log"
 	"math/rand"
 	"starchain/common/config"
 	"fmt"
@@ -25,7 +24,6 @@ var (
 )
 
 func init() {
-	log.Init()
 	crypto.SetAlg(config.Parameters.EncryptAlg)
 	//seed transaction nonce
 	rand.Seed(time.Now().UnixNano())
