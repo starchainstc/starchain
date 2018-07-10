@@ -30,6 +30,7 @@
     "allowIp":"127.0.0.1",
     "appKey":"appkey",
     "secretKey":"123456",
+    "ChainPath":"",
     "LogLevel":"info",
     "TransactionFee": {
       "Transfer": 0.000
