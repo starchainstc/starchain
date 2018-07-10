@@ -414,8 +414,10 @@ func (rt *restServer) authCheck(req *http.Request,secretkey string) bool{
 	allowip := Parameters.AllowIp
 	if allowip != "" && allowip != "0.0.0.0" && !strings.Contains(allowip,"0.0.0.0"){
 		remoteIp := req.RemoteAddr
+		index := strings.Index(remoteIp,":")
+		remoteIp = remoteIp[:index]
 		if !strings.Contains(allowip,remoteIp){
-			log.NewLog().Error("IP IS NOT AUTHOR")
+			log.NewLog().Error(remoteIp," IP IS NOT AUTHOR")
 			return false
 		}
 	}
@@ -424,6 +426,7 @@ func (rt *restServer) authCheck(req *http.Request,secretkey string) bool{
 	md.Write([]byte(authCoder))
 	encode := md.Sum(nil)
 	if hex.EncodeToString(encode) == secretkey{
+		log.NewLog().Error("secretkey is not right")
 		return true
 	}
 	return false

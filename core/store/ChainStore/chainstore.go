@@ -27,6 +27,7 @@ import (
 	"starchain/events"
 	"starchain/smartcontract/service"
 	"starchain/net/httprestful/common"
+	"starchain/common/config"
 )
 
 const (
@@ -73,7 +74,11 @@ func NewStore(file string) (IStore, error) {
 
 func NewLedgerStore() (ILedgerStore, error) {
 	// TODO: read config file decide which db to use.
-	cs, err := NewChainStore("chain")
+	path := config.Parameters.ChainPath
+	if path == ""{
+		path = "chain"
+	}
+	cs, err := NewChainStore(path)
 	if err != nil {
 		return nil, err
 	}
