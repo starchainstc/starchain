@@ -39,6 +39,7 @@ type Configuration struct {
 	CertPath		string				`json:"certPath"`
 	KeyPath			string				`json:"keyPath"`
 	AllowIp			string 				`json:"allowIp"`
+	ChainPath		string				`json:"ChainPath"`
 	CAPath          string             `json:"CAPath"`
 	GenBlockTime    uint               `json:"GenBlockTime"`
 	MultiCoreNum    uint               `json:"MultiCoreNum"`
