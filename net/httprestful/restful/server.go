@@ -426,9 +426,9 @@ func (rt *restServer) authCheck(req *http.Request,secretkey string) bool{
 	md.Write([]byte(authCoder))
 	encode := md.Sum(nil)
 	if hex.EncodeToString(encode) == secretkey{
-		log.NewLog().Error("secretkey is not right")
 		return true
 	}
+	log.NewLog().Error("secretkey is not right")
 	return false
 }
 

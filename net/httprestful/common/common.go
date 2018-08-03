@@ -576,7 +576,7 @@ func SendToAddress(cmd map[string]interface{}) map[string]interface{}{
 	}
 
 	if errCode := VerifyAndSendTx(txn); errCode != errors.ErrNoError {
-		resp[ErrorCode.RESP_ERROR] = int32(errCode)
+		resp[ErrorCode.RESP_ERROR] = errCode
 		return resp
 	}
 	txHash := txn.Hash()

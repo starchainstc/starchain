@@ -1,23 +1,23 @@
 package test_case
 
 import (
-	"STC/core/ledger"
-	"STC/crypto"
-	"STC/core/store/ChainStore"
-	client "STC/account"
-	"STC/vm/evm"
+	"starchain/core/ledger"
+	"starchain/crypto"
+	"starchain/core/store/ChainStore"
+	client "starchain/account"
+	"starchain/vm/evm"
 	"strings"
-	"STC/vm/evm/abi"
-	"STC/common"
+	"starchain/vm/evm/abi"
+	"starchain/common"
 	"time"
 	"math/big"
 )
 
 func NewEngine(ABI, BIN string, params ...interface{}) (*common.Uint160, *common.Uint160, *evm.ExecutionEngine, *abi.ABI, error) {
 	ledger.DefaultLedger = new(ledger.Ledger)
-	ledger.DefaultLedger.Store = ChainStore.NewLedgerStore()
+	ledger.DefaultLedger.Store,_ = ChainStore.NewLedgerStore()
 	ledger.DefaultLedger.Store.InitLedgerStore(ledger.DefaultLedger)
-	crypto.SetAlg(crypto.P256R1)
+	crypto.SetAlg("P256R1")
 	account, _ := client.NewAccount()
 	t := time.Now().Unix()
 	e := evm.NewExecutionEngine(nil, big.NewInt(t), big.NewInt(1), common.Fixed64(0))

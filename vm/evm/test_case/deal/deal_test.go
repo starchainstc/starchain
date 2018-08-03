@@ -2,8 +2,8 @@ package deal
 
 import (
 	"testing"
-	"STC/vm/evm/test_case"
-	"STC/common"
+	"starchain/vm/evm/test_case"
+	"starchain/common"
 	"fmt"
 )
 
