@@ -1,0 +1,41 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Go template
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, build with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+.gitignore
+.idea/encodings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/starchain.iml
+.idea/workspace.xml
+Logs/
+bin/
+chain/
+vendor/github.com/bitly/
+vendor/github.com/golang/
+vendor/github.com/gorilla/
+vendor/github.com/itchyny/base58-go/LICENSE
+vendor/github.com/itchyny/base58-go/Makefile
+vendor/github.com/itchyny/base58-go/README.md
+vendor/github.com/itchyny/base58-go/base58.go
+vendor/github.com/itchyny/base58-go/base58_test.go
+vendor/github.com/itchyny/base58-go/cmd/
+vendor/github.com/mitchellh/
+vendor/github.com/pborman/
+vendor/github.com/piterparks/
+vendor/github.com/syndtr/
+vendor/github.com/urfave/
+vendor/github.com/whyrusleeping/
+wallet.dat
+test.go
