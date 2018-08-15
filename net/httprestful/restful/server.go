@@ -64,6 +64,7 @@ const (
 	Api_GetRecordByFileHash = "/api/v1/custom/file/:hash"
 	Api_SendToAddress 		= "/api/v1/sendtoaddress"
 	Api_GetNewAddress		= "/api/v1/getnewaddress"
+	Api_SendToManyAddress 	= "/api/v1/sendtomanyaddress"
 )
 
 func InitRestServer(checkAccessToken func(string, string) (string, errors.ErrCode, interface{})) ApiServer {
@@ -188,6 +189,7 @@ func (rt *restServer) registryMethod() {
 		Api_NoticeServerState: {name: "setpostblock", handler: SetPushBlockFlag},
 		Api_WebsocketState:    {name: "setwebsocketstate", handler: rt.setWebsocketState},
 		Api_SendToAddress:		{name:"sendtoaddress",handler:SendToAddress},
+		Api_SendToManyAddress:	{name:"sendtomangaddress",handler:SendToManyAddress},
 	}
 	rt.postMap = postMethodMap
 	rt.getMap = getMethodMap
@@ -309,6 +311,8 @@ func (rt *restServer) getParams(r *http.Request, url string, req map[string]inte
 	case Api_WebsocketState:
 		break
 	case Api_SendToAddress:
+	case Api_SendToManyAddress:
+		break;
 	default:
 	}
 	return req

@@ -585,6 +585,62 @@ func SendToAddress(cmd map[string]interface{}) map[string]interface{}{
 }
 
 
+
+/**
+send to address
+ */
+
+func SendToManyAddress(cmd map[string]interface{}) map[string]interface{}{
+	resp := ResponsePack(ErrorCode.SUCCESS)
+	var asset string
+	asset = cmd["asset"].(string)
+	targets := cmd["targets"].([]interface{})
+	if Wallet == nil {
+		resp[ErrorCode.RESP_ERROR] = ErrorCode.INVALID_PARAMS
+		return resp
+	}
+	var batchOuts []util.BatchOut
+	for _,tar := range(targets){
+		t := tar.(map[string]interface{})
+		batchOuts = append(batchOuts,util.BatchOut{Address:t["address"].(string),
+		Value:t["value"].(string)})
+	}
+
+	//batchOut := util.BatchOut{
+	//	Address: address,
+	//	Value:   value,
+	//}
+	tmp, err := HexStringToBytesReverse(asset)
+	if err != nil {
+		resp[ErrorCode.RESP_ERROR] = ErrorCode.INVALID_PARAMS
+		return resp
+	}
+	var assetID Uint256
+	if err := assetID.Deserialize(bytes.NewReader(tmp)); err != nil {
+		resp[ErrorCode.RESP_ERROR] = ErrorCode.INVALID_PARAMS
+		return resp
+	}
+	txn, err := util.MakeTransferTransaction(Wallet, assetID, batchOuts...)
+	if err != nil {
+		resp[ErrorCode.RESP_ERROR] = ErrorCode.INVALID_TRANSACTION
+		return resp
+	}
+
+	if errCode := VerifyAndSendTx(txn); errCode != errors.ErrNoError {
+		resp[ErrorCode.RESP_ERROR] = errCode
+		return resp
+	}
+	txHash := txn.Hash()
+	resp[ErrorCode.RESP_RESULT] = BytesToHexString(txHash.ToArrayReverse())
+	return resp
+}
+
+
+
+
+
+
+
 func GetNewAddress(cmd map[string]interface{}) map[string]interface{} {
 	resp := ResponsePack(ErrorCode.SUCCESS)
 	acc,err :=Wallet.CreateAccount()
