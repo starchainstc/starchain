@@ -53,8 +53,8 @@ func main(){
 	log.Info("start sync block")
 	node.SyncNodeHeight()
 	log.Info("sync block finish")
-	go node.WaitForFourPeersStart()
-	go node.WaitForSyncBlkFinish()
+	node.WaitForFourPeersStart()
+	node.WaitForSyncBlkFinish()
 	//start rpc server for console
 	go rpchttp.StartRPCServer()
 	//start server for http api
