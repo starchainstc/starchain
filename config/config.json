@@ -1,7 +1,7 @@
 {
   "Configuration": {
     "MagicCode": 5841263,
-    "ver":1,
+    "Ver":1,
     "VerifyList": [
       "47.52.44.156:25887",
       "47.75.44.148:25887",
@@ -27,9 +27,9 @@
     "NodeType": "service",
     "Tls": false,
     "MultiCoreNum": 7,
-    "allowIp":"127.0.0.1",
-    "appKey":"appkey",
-    "secretKey":"123456",
+    "AllowIp":"127.0.0.1",
+    "AppKey":"appkey",
+    "SecretKey":"123456",
     "ChainPath":"",
     "LogLevel":"info",
     "TransactionFee": {
