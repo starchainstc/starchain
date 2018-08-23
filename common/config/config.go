@@ -16,7 +16,7 @@ var Version string
 
 type Configuration struct {
 	MagicCode       int64              `json:"MagicCode"`  //magic code for blockchain data file
-	Version         int                `json:"ver"`  //version of starchain
+	Version         int                `json:"Ver"`  //version of starchain
 	SeedList        []string           `json:"VerifyList"`  //list of seed
 	BookKeepers     []string           `json:"BookKeepers"` // The default book keepers' publickey
 	HttpRestPort    int                `json:"RestPort"`
@@ -34,11 +34,11 @@ type Configuration struct {
 	WebSocketPort   int                `json:"WebSocketPort"`
 	PrintLevel      string             `json:"LogLevel"`
 	IsTLS           bool               `json:"Tls"`
-	AppKey        string             	`json:"appKey"`
-	SecretKey         string             `json:"secretKey"`
-	CertPath		string				`json:"certPath"`
-	KeyPath			string				`json:"keyPath"`
-	AllowIp			string 				`json:"allowIp"`
+	AppKey        string             	`json:"AppKey"`
+	SecretKey         string             `json:"SecretKey"`
+	CertPath		string				`json:"CertPath"`
+	KeyPath			string				`json:"KeyPath"`
+	AllowIp			string 				`json:"AllowIp"`
 	ChainPath		string				`json:"ChainPath"`
 	CAPath          string             `json:"CAPath"`
 	GenBlockTime    uint               `json:"GenBlockTime"`
