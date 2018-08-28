@@ -189,7 +189,7 @@ func (rt *restServer) registryMethod() {
 		Api_NoticeServerState: {name: "setpostblock", handler: SetPushBlockFlag},
 		Api_WebsocketState:    {name: "setwebsocketstate", handler: rt.setWebsocketState},
 		Api_SendToAddress:		{name:"sendtoaddress",handler:SendToAddress},
-		Api_SendToManyAddress:	{name:"sendtomangaddress",handler:SendToManyAddress},
+		Api_SendToManyAddress:	{name:"sendtomanyaddress",handler:SendToManyAddress},
 	}
 	rt.postMap = postMethodMap
 	rt.getMap = getMethodMap
