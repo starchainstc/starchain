@@ -27,7 +27,7 @@
     "NodeType": "service",
     "Tls": false,
     "MultiCoreNum": 7,
-    "AllowIp":"127.0.0.1",
+    "AllowIp":"127.0.0.1,0.0.0.0",
     "AppKey":"appkey",
     "SecretKey":"123456",
     "ChainPath":"",
