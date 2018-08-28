@@ -425,6 +425,10 @@ func (rt *restServer) authCheck(req *http.Request,secretkey string) bool{
 			return false
 		}
 	}
+	if Parameters.AppKey == ""{
+		log.INFO("no secret")
+		return true
+	}
 	authCoder := Parameters.AppKey+Parameters.SecretKey
 	md := crypto.MD5.New()
 	md.Write([]byte(authCoder))
