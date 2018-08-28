@@ -426,7 +426,7 @@ func (rt *restServer) authCheck(req *http.Request,secretkey string) bool{
 		}
 	}
 	if Parameters.AppKey == ""{
-		log.INFO("no secret")
+		log.NewLog().Info("no secret")
 		return true
 	}
 	authCoder := Parameters.AppKey+Parameters.SecretKey
