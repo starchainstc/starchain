@@ -40,6 +40,7 @@ type Configuration struct {
 	KeyPath			string				`json:"KeyPath"`
 	AllowIp			string 				`json:"AllowIp"`
 	ChainPath		string				`json:"ChainPath"`
+	WalletPath		string				`json:"WalletPath"`
 	CAPath          string             `json:"CAPath"`
 	GenBlockTime    uint               `json:"GenBlockTime"`
 	MultiCoreNum    uint               `json:"MultiCoreNum"`
