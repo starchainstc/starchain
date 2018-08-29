@@ -27,10 +27,11 @@
     "NodeType": "service",
     "Tls": false,
     "MultiCoreNum": 7,
-    "AllowIp":"127.0.0.1,0.0.0.0",
+    "AllowIp":"127.0.0.1",
     "AppKey":"appkey",
     "SecretKey":"123456",
     "ChainPath":"",
+    "WalletPath":"./config/walle.dat",
     "LogLevel":"info",
     "TransactionFee": {
       "Transfer": 0.000
