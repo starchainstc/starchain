@@ -150,7 +150,8 @@ func (client *ClientImpl) ProcessBlocks() {
 			}
 			client.ProcessOneBlock(block)
 		}
-		time.Sleep(6 * time.Second)
+
+		time.Sleep(2 * time.Second)
 	}
 }
 
@@ -734,8 +735,12 @@ func clientIsDefaultBookKeeper(publicKey string) bool {
 
 func GetClient() Client {
 	var log = log.NewLog()
-	if !FileExisted(WalletFileName) {
-		log.Fatal(fmt.Sprintf("No %s detected, please create a wallet by using command line.", WalletFileName))
+	var walletPath = config.Parameters.WalletPath
+	if walletPath == ""{
+		walletPath = WalletFileName
+	}
+	if !FileExisted(walletPath) {
+		log.Fatal(fmt.Sprintf("No %s detected, please create a wallet by using command line.", walletPath))
 		os.Exit(1)
 	}
 	passwd, err := passwd.GetAccountPwd()
@@ -743,7 +748,7 @@ func GetClient() Client {
 		log.Fatal("Get password error.")
 		os.Exit(1)
 	}
-	c, err := Open(WalletFileName, passwd)
+	c, err := Open(walletPath, passwd)
 	if err != nil {
 		return nil
 	}
