@@ -65,6 +65,7 @@ const (
 	Api_SendToAddress 		= "/api/v1/sendtoaddress"
 	Api_GetNewAddress		= "/api/v1/getnewaddress"
 	Api_SendToManyAddress 	= "/api/v1/sendtomanyaddress"
+	Api_GetBalanceForAllAddr= "/api/v1/getallbalance"
 )
 
 func InitRestServer(checkAccessToken func(string, string) (string, errors.ErrCode, interface{})) ApiServer {
@@ -169,6 +170,7 @@ func (rt *restServer) registryMethod() {
 		Api_GetRecordByHash:     {name: "getrecord", handler: GetRecordByHash},
 		Api_GetRecordByFileHash: {name: "getrecordbyfile", handler: GetRecordByFileHash},
 		Api_GetNewAddress:		 {name: "getnewaddress", handler:GetNewAddress},
+		Api_GetBalanceForAllAddr: {name: "getallbalance",handler:GetBalanceForAllAddr},
 	}
 
 	sendRawTransaction := func(cmd map[string]interface{}) map[string]interface{} {
