@@ -1,6 +1,7 @@
 package common
 
 import (
+	"starchain/account"
 	"starchain/net/protocol"
 	."starchain/common"
 	"starchain/net/httprestful/ErrorCode"
@@ -632,6 +633,38 @@ func SendToManyAddress(cmd map[string]interface{}) map[string]interface{}{
 	}
 	txHash := txn.Hash()
 	resp[ErrorCode.RESP_RESULT] = BytesToHexString(txHash.ToArrayReverse())
+	return resp
+}
+
+
+func GetBalanceForAllAddr(cmd map[string]interface{})map[string]interface{}{
+	resp := ResponsePack(ErrorCode.SUCCESS)
+	if Wallet == nil {
+		resp[ErrorCode.RESP_ERROR] = ErrorCode.INVALID_PARAMS
+		return resp
+	}
+
+	coins := Wallet.GetCoins()
+	assets := make(map[Uint256]Fixed64)
+	for _, out := range coins {
+		if out.AddressType == account.SingleSign {
+			if _, ok := assets[out.Output.AssetID]; !ok {
+				assets[out.Output.AssetID] = out.Output.Value
+			} else {
+				assets[out.Output.AssetID] += out.Output.Value
+			}
+		}
+	}
+	if len(assets) == 0 {
+		resp[ErrorCode.RESP_ERROR] = ErrorCode.UNKNOWN_ASSET
+		return resp
+	}
+	var ass = make(map[string]Fixed64)
+	for id,amount := range assets{
+		assid := BytesToHexString(id.ToArrayReverse())
+		ass[assid]=amount
+	}
+	resp[ErrorCode.RESP_RESULT] = ass
 	return resp
 }
 
