@@ -432,6 +432,7 @@ func (rt *restServer) authCheck(req *http.Request,secretkey string) bool{
 		return true
 	}
 	authCoder := Parameters.AppKey+Parameters.SecretKey
+	log.NewLog().Infof("sectkey:%s",secretkey)
 	md := crypto.MD5.New()
 	md.Write([]byte(authCoder))
 	encode := md.Sum(nil)
