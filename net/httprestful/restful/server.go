@@ -418,6 +418,7 @@ func (rt *restServer) response(w http.ResponseWriter, resp map[string]interface{
 
 func (rt *restServer) authCheck(req *http.Request,secretkey string) bool{
 	allowip := Parameters.AllowIp
+	log.NewLog().Infof("remote addr:%s",req.RemoteAddr)
 	if allowip != "" && allowip != "0.0.0.0" && !strings.Contains(allowip,"0.0.0.0"){
 		remoteIp := req.RemoteAddr
 		index := strings.Index(remoteIp,":")
