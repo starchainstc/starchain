@@ -2,6 +2,7 @@ package common
 
 import (
 	"starchain/account"
+	"starchain/common/log"
 	"starchain/net/protocol"
 	."starchain/common"
 	"starchain/net/httprestful/ErrorCode"
@@ -528,7 +529,7 @@ func SendRawTransaction(cmd map[string]interface{}) map[string]interface{} {
 	var hash Uint256
 	hash = txn.Hash()
 	if errCode := VerifyAndSendTx(&txn); errCode != errors.ErrNoError {
-		resp[ErrorCode.RESP_ERROR] = int32(errCode)
+		resp[ErrorCode.RESP_ERROR] = errCode
 		return resp
 	}
 	resp[ErrorCode.RESP_RESULT] = BytesToHexString(hash.ToArrayReverse())
@@ -572,6 +573,7 @@ func SendToAddress(cmd map[string]interface{}) map[string]interface{}{
 	}
 	txn, err := util.MakeTransferTransaction(Wallet, assetID, batchOut)
 	if err != nil {
+		log.NewLog().Error(err.Error())
 		resp[ErrorCode.RESP_ERROR] = ErrorCode.INVALID_TRANSACTION
 		return resp
 	}
