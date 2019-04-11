@@ -25,9 +25,13 @@ var l *stclog
 var logger *slog.Logger
 
 func init(){
-	logPath := "./Logs/"
+	//logPath := "./Logs/"
 	logName := "stc.log"
 	logLevel := config.Parameters.PrintLevel
+	logPath := config.Parameters.LogPath
+	if logPath == ""{
+		logPath = "./Logs"
+	}
 	writes := [] io.Writer{}
 	writes = append(writes,os.Stdout)
 	_,err := os.Stat(logPath)
