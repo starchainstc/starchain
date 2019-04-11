@@ -33,6 +33,7 @@ type Configuration struct {
 	NodeType        string             `json:"NodeType"`
 	WebSocketPort   int                `json:"WebSocketPort"`
 	PrintLevel      string             `json:"LogLevel"`
+	LogPath			string 				`json:"LogPath"`
 	IsTLS           bool               `json:"Tls"`
 	AppKey        string             	`json:"AppKey"`
 	SecretKey         string             `json:"SecretKey"`
