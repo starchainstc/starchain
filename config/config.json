@@ -31,7 +31,7 @@
     "AppKey":"appkey",
     "SecretKey":"123456",
     "ChainPath":"",
-    "WalletPath":"./config/walle.dat",
+    "WalletPath":"./config/wallet.dat",
     "LogLevel":"info",
     "TransactionFee": {
       "Transfer": 0.000
