@@ -30,7 +30,10 @@ func init(){
 	logLevel := config.Parameters.PrintLevel
 	logPath := config.Parameters.LogPath
 	if logPath == ""{
-		logPath = "./Logs"
+		logPath = "./Logs/"
+	}
+	if !strings.HasSuffix(logPath,"/"){
+		logPath = logPath+"/"
 	}
 	writes := [] io.Writer{}
 	writes = append(writes,os.Stdout)
