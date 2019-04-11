@@ -33,6 +33,7 @@
     "ChainPath":"",
     "WalletPath":"./config/wallet.dat",
     "LogLevel":"info",
+    "LogPath":"./logs/",
     "TransactionFee": {
       "Transfer": 0.000
     }
