@@ -35,7 +35,6 @@ func init(){
 	if !strings.HasSuffix(logPath,"/"){
 		logPath = logPath+"/"
 	}
-	//var writes []io.Writer
 	_,err := os.Stat(logPath)
 	if err != nil && os.IsNotExist(err){
 		err := os.Mkdir(logPath,os.ModePerm)
@@ -45,14 +44,9 @@ func init(){
 	}
 	logfile,err := os.OpenFile(logPath+logName,os.O_APPEND|os.O_CREATE|os.O_RDWR,os.ModePerm)
 	if err != nil{
-		//slog.Println(err)
-		//return
 		slog.Fatal(err)
 	}
 	fmt.Println(logPath+logName)
-	//writes = append(writes,logfile)
-	//writes = append(writes,os.Stdout)
-	//writes := []io.Writer{os.Stdout,logfile}
 	logio := io.MultiWriter(os.Stdout,logfile)
 	logger = slog.New(logio,"",slog.Ldate|slog.Ltime)
 	l = &stclog{c:make(chan string,MAXSIZE),level:getLevel(logLevel)}
