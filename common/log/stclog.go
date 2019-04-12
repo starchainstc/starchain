@@ -35,8 +35,7 @@ func init(){
 	if !strings.HasSuffix(logPath,"/"){
 		logPath = logPath+"/"
 	}
-	writes := [] io.Writer{}
-	writes = append(writes,os.Stdout)
+	var writes []io.Writer
 	_,err := os.Stat(logPath)
 	if err != nil && os.IsNotExist(err){
 		err := os.Mkdir(logPath,os.ModePerm)
@@ -51,12 +50,14 @@ func init(){
 		slog.Fatal(err)
 	}
 	writes = append(writes,logfile)
+	writes = append(writes,os.Stdout)
 	logio := io.MultiWriter(writes...)
 	logger = slog.New(logio,"",slog.Ldate|slog.Ltime)
 	l = &stclog{c:make(chan string,MAXSIZE),level:getLevel(logLevel)}
 	rotateLog(func() {
 		logfile.Close()
-		err = os.Rename(logPath+logName,logPath+"stc-"+time.Now().Format("2006-01-02")+".log")
+		d, _ := time.ParseDuration("-24h")
+		err = os.Rename(logPath+logName,logPath+"stc-"+time.Now().Add(d).Format("2006-01-02")+".log")
 		if err != nil {
 			slog.Println(err)
 		}
