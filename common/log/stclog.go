@@ -63,7 +63,7 @@ func init(){
 		if err != nil {
 			slog.Println(err)
 		}
-		logfile,err = os.OpenFile(logPath+logName,os.O_APPEND|os.O_CREATE,os.ModePerm)
+		logfile,err = os.OpenFile(logPath+logName,os.O_APPEND|os.O_CREATE|os.O_RDWR,os.ModePerm)
 		if err != nil {
 			slog.Println(err)
 		}
