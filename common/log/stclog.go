@@ -52,8 +52,8 @@ func init(){
 	fmt.Println(logPath+logName)
 	//writes = append(writes,logfile)
 	//writes = append(writes,os.Stdout)
-	writes := []io.Writer{os.Stdout,logfile}
-	logio := io.MultiWriter(writes...)
+	//writes := []io.Writer{os.Stdout,logfile}
+	logio := io.MultiWriter(os.Stdout,logfile)
 	logger = slog.New(logio,"",slog.Ldate|slog.Ltime)
 	l = &stclog{c:make(chan string,MAXSIZE),level:getLevel(logLevel)}
 	rotateLog(func() {
@@ -67,7 +67,7 @@ func init(){
 		if err != nil {
 			slog.Println(err)
 		}
-		logio = io.MultiWriter(append([]io.Writer{},os.Stdout,logfile)...)
+		logio = io.MultiWriter(os.Stdout,logfile)
 		logger.SetOutput(logio)
 	})
 	go func(){
