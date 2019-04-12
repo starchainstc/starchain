@@ -75,7 +75,10 @@ func init(){
 			select{
 			case strlog := <- l.c:
 				if strlog != ""{
-					logger.Output(0,strlog)
+					err = logger.Output(0,strlog)
+					if err != nil{
+						fmt.Println(err.Error())
+					}
 				}
 			}
 		}
