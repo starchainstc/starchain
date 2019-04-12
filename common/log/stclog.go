@@ -52,7 +52,7 @@ func init(){
 	fmt.Println(logPath+logName)
 	//writes = append(writes,logfile)
 	//writes = append(writes,os.Stdout)
-	writes := []io.Writer{logfile,os.Stdout}
+	writes := []io.Writer{os.Stdout,logfile}
 	logio := io.MultiWriter(writes...)
 	logger = slog.New(logio,"",slog.Ldate|slog.Ltime)
 	l = &stclog{c:make(chan string,MAXSIZE),level:getLevel(logLevel)}
