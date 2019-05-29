@@ -60,6 +60,8 @@ func walletAction(c *cli.Context) error{
 			showBalancesInfo(wallet)
 		case "height":
 			showHeightInfo(wallet)
+		case "privatekey":
+			showPrivateKeysInfo(wallet)
 		default:
 			fmt.Println("missing parameter for [--list]")
 		}
@@ -87,6 +89,11 @@ func walletAction(c *cli.Context) error{
 		}
 		if err := wallet.Rebuild(); err != nil {
 			fmt.Fprintln(os.Stderr, "delete coins info from wallet file error")
+			os.Exit(1)
+		}
+		err = wallet.LoadCoins();
+		if err != nil{
+			fmt.Fprintln(os.Stderr, "load coins info from wallet file error")
 			os.Exit(1)
 		}
 		fmt.Printf("%s was reset successfully\n", name)
@@ -137,7 +144,7 @@ func NewCommand() *cli.Command {
 			},
 			cli.StringFlag{
 				Name:"list,l",
-				Usage:"list account info [account,mainaccount,balance,pubkey]",
+				Usage:"list account info [account,mainaccount,balance,privatekey]",
 			},
 			cli.BoolFlag{
 				Name: "changepassword",
@@ -238,7 +245,7 @@ func showBalancesInfo(wallet account.Client) {
 	fmt.Println("#####  ####### \t\t\t\t\t\t\t\t ########")
 	i := 0
 	for id, amount := range assets {
-		fmt.Printf("%4s  %s  %v\n", strconv.Itoa(i), common.BytesToHexString(id.ToArrayReverse()), amount)
+		fmt.Printf("%2s  %s  %v\n", strconv.Itoa(i), common.BytesToHexString(id.ToArrayReverse()), amount)
 		i++
 	}
 }
